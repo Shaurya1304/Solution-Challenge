@@ -1,6 +1,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
-  import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+  import {getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
  import{getFirestore, setDoc, doc} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js"
   
 
@@ -47,6 +47,7 @@
         }
     
         const auth = getAuth();
+        const provider = new GoogleAuthProvider();
         const db = getFirestore();
     
         createUserWithEmailAndPassword(auth, email, password)
@@ -76,6 +77,31 @@
                 }
             });    
     });
+
+    const popin = document.getElementById('popup-signin');
+    popin.addEventListener("click", function(){
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+        .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+
+        const user = result.user;
+        console.log(user);
+        window.location.href = "../homepage.html";
+        }).catch((error) => {
+         // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(errorMessage);
+        });
+    })
+
     const signIn=document.getElementById('submitSignIn');
     signIn.addEventListener('click', (event)=>{
     event.preventDefault();
