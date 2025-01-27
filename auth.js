@@ -2,10 +2,7 @@
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
   import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
  import{getFirestore, setDoc, doc} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js"
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  
 
   function showMessage(message, divId){
     var messageDiv=document.getElementById(divId);
@@ -30,43 +27,6 @@
   const analytics = getAnalytics(app);
   
   const signUp=document.getElementById('submitSignUp');
-//   signUp.addEventListener('click', (event)=>{
-//      event.preventDefault();
-//      const email=document.getElementById('email').value;
-//      const password=document.getElementById('password').value;
-//      const Name=document.getElementById('name').value;
- 
-//      const auth=getAuth();
-//      const db=getFirestore();
- 
-    //  createUserWithEmailAndPassword(auth, email, password)
-    //  .then((userCredential)=>{
-    //      const user=userCredential.user;
-    //      const userData={
-    //          email: email,
-    //          Name: Name,
-    //          password: password
-    //      };
-    //      showMessage('Account Created Successfully', 'signUpMessage');
-    //      const docRef=doc(db, "users", user.uid);
-    //      setDoc(docRef,userData)
-    //      .then(()=>{
-    //          window.location.href='index.html';
-    //      })
-    //      .catch((error)=>{
-    //          console.error("error writing document", error);
- 
-    //      });
-    //  })
-    //  .catch((error)=>{
-    //      const errorCode=error.code;
-    //      if(errorCode=='auth/email-already-in-use'){
-    //          showMessage('Email Address Already Exists !!!', 'signUpMessage');
-    //      }
-    //      else{
-    //          showMessage('unable to create User', 'signUpMessage');
-    //      }
-    //  })
    
     signUp.addEventListener('click', (event) => {
         event.preventDefault();
@@ -116,3 +76,27 @@
                 }
             });    
     });
+    const signIn=document.getElementById('submitSignIn');
+    signIn.addEventListener('click', (event)=>{
+    event.preventDefault();
+    const email=document.getElementById('email').value;
+    const password=document.getElementById('password').value;
+    const auth=getAuth();
+
+    signInWithEmailAndPassword(auth, email,password)
+    .then((userCredential)=>{
+        showMessage('login is successful', 'signInMessage');
+        const user=userCredential.user;
+        localStorage.setItem('loggedInUserId', user.uid);
+        window.location.href='homepage.html';
+    })
+    .catch((error)=>{
+        const errorCode=error.code;
+        if(errorCode==='auth/invalid-credential'){
+            showMessage('Incorrect Email or Password', 'signInMessage');
+        }
+        else{
+            showMessage('Account does not Exist', 'signInMessage');
+        }
+    })
+ })
