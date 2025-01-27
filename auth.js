@@ -78,30 +78,6 @@
             });    
     });
 
-    const popup = document.getElementById('popup-signup');
-    popup.addEventListener("click", function(){
-        const auth = getAuth();
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider)
-        .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-
-        const user = result.user;
-        console.log(user);
-        window.location.href = 'homepage.html';
-        }).catch((error) => {
-         // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log(errorMessage);
-        });
-    })
-
     const popin = document.getElementById('popup-signin');
     popin.addEventListener("click", function(){
         const auth = getAuth();
