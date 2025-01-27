@@ -79,8 +79,8 @@
     const signIn=document.getElementById('submitSignIn');
     signIn.addEventListener('click', (event)=>{
     event.preventDefault();
-    const email=document.getElementById('email').value;
-    const password=document.getElementById('password').value;
+    const email=document.getElementById('mail').value;
+    const password=document.getElementById('pass').value;
     const auth=getAuth();
 
     signInWithEmailAndPassword(auth, email,password)
