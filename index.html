@@ -8,6 +8,7 @@
       crossorigin="anonymous"
     ></script>
     <link rel="stylesheet" href="style.css" />
+    <script type="module" src="auth.js"></script>
     <title>Sign in & Sign up Form</title>
   </head>
   <body>
@@ -16,61 +17,40 @@
         <div class="signin-signup">
           <form action="#" class="sign-in-form">
             <h2 class="title">Sign in</h2>
+            <div id="signInMessage" class="messageDiv" style="display:none;"></div>
             <div class="input-field">
               <i class="fas fa-user"></i>
-              <input type="text" placeholder="Username" />
+              <input type="text" placeholder="Email" id="mail"/>
             </div>
             <div class="input-field">
               <i class="fas fa-lock"></i>
-              <input type="password" placeholder="Password" />
+              <input type="password" placeholder="Password" id="pass"/>
             </div>
-            <input type="submit" value="Login" class="btn solid" />
-            <p class="social-text">Or Sign in with social platforms</p>
+            <input type="submit" id="submitSignIn" value="Login" class="btn solid" />
+            <p class="social-text">Or Sign in and Register with Google</p>
             <div class="social-media">
-              <a href="#" class="social-icon">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#" class="social-icon">
+              <button type="submit" id="popup-signin" class="social-icon">
+                <img src="img\HQr5iV01.svg" alt="Google" />
                 <i class="fab fa-google"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-linkedin-in"></i>
               </a>
             </div>
           </form>
           <form action="#" class="sign-up-form">
             <h2 class="title">Sign up</h2>
+            <div id="signUpMessage" class="messageDiv" style="display:none;"></div>
             <div class="input-field">
               <i class="fas fa-user"></i>
-              <input type="text" placeholder="Username" />
+              <input type="text" id="name" placeholder="Username"/>
             </div>
             <div class="input-field">
               <i class="fas fa-envelope"></i>
-              <input type="email" placeholder="Email" />
+              <input type="email" id="email" placeholder="Email"/>
             </div>
             <div class="input-field">
               <i class="fas fa-lock"></i>
-              <input type="password" placeholder="Password" />
+              <input type="password" id="password" placeholder="Password"/>
             </div>
-            <input type="submit" class="btn" value="Sign up" />
-            <p class="social-text">Or Sign up with social platforms</p>
-            <div class="social-media">
-              <a href="#" class="social-icon">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-google"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-            </div>
+            <input type="submit" value="Register" id="submitSignUp" class="btn solid" />
           </form>
         </div>
       </div>
@@ -80,9 +60,9 @@
           <div class="content">
             <h3>New here ?</h3>
             <p>
-               Don't have an account yet ? Sign up and get access to all our services.
+               Sign up in just a few clicks and explore everything we have to offer. From exciting features to exclusive deals, your journey starts here!
             </p>
-            <button class="btn transparent" id="sign-up-btn">
+            <button type="submit" class="btn transparent" id="sign-up-btn">
               Sign up
             </button>
           </div>
@@ -90,11 +70,11 @@
         </div>
         <div class="panel right-panel">
           <div class="content">
-            <h3>One of us ?</h3>
+            <h3>Ready to dive back in ?</h3>
             <p>
-              Already made an account here? Sign in and get access to all our services.
+               Log in now and explore new content, exclusive features, and exciting updates tailored for you!
             </p>
-            <button class="btn transparent" id="sign-in-btn">
+            <button type="submit" class="btn transparent" id="sign-in-btn">
               Sign in
             </button>
           </div>
