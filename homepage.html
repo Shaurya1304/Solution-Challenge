@@ -3,67 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOME Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Seekho - Learning Platform</title>
     <style>
-        .scroll-container {
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f2fc;
+            color: #333;
+        }
+        .header {
             display: flex;
-            overflow-x: auto;
-            gap: 16px;
-            scroll-behavior: smooth;
-            padding-bottom: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #6a5acd;
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+        .header button {
+            background-color: #483d8b;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+        .dashboard h1 {
+            font-size: 36px;
+            color: #4b0082;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .search-bar input {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #6a5acd;
+            border-radius: 5px;
+        }
+        .search-bar button {
+            background-color: #6a5acd;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .video-container iframe {
+            margin: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
-<body class="bg-blue-100 text-gray-900">
-
-    <!-- YouTube Search Bar -->
-    <div class="bg-blue-600 p-4 flex justify-center items-center space-x-4">
-        <input id="yt-search" type="text" placeholder="Start learninig..." class="px-3 py-2 rounded w-1/2 bg-white text-gray-700">
-        <button id="search-button" class="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200">Search</button>
+<body>
+    <div class="header">
+        <div class="logo">Seekho</div>
+        <nav>
+            <a href="#">About</a>
+            <a href="#">Courses</a>
+            <a href="#">Contact Us</a>
+        </nav>
+        <button onclick="showAuthForm()">Sign In</button>
     </div>
 
-    <!-- Header Section -->
-    <header class="bg-blue-500 p-4 flex justify-between items-center shadow-lg">
-        <h1 class="text-2xl font-bold text-white">Seekho</h1>
-
-        <nav class="flex space-x-6">
-            <a href="#" class="text-white hover:text-blue-200">Home</a>
-            <a href="#" class="text-white hover:text-blue-200">Earn</a>
-            <a href="#" class="text-white hover:text-blue-200">Scholerships</a>
-            <a href="#" class="text-white hover:text-blue-200">Opportunities</a>
-        </nav>
-
-        <div class="flex space-x-6 items-center">
-            <div class="flex items-center text-white">
-                <i data-lucide="circle-dollar-sign" class="w-6 h-6 mr-2"></i>
-                <span id="coin-count" class="text-lg font-semibold">0</span>
-            </div>
-
-            <a href="#" class="text-white">
-                <i data-lucide="user" class="w-6 h-6"></i> 
-            </a>
+    <div class="dashboard">
+        <h1>Welcome to Seekho - Your Tech Learning Hub</h1>
+        <p>Enhance your skills with the best courses.</p>
+        <div class="search-bar">
+            <input type="text" id="searchQuery" placeholder="What do you want to learn?">
+            <button onclick="searchVideos()">Search</button>
         </div>
-    </header>
+    </div>
 
-    <!-- Videos Section -->
-    <section class="p-6">
-        <h2 class="text-xl font-bold text-blue-600">🎬 Video Results</h2>
-        <div id="video-container" class="scroll-container mt-4"></div>
-        <button id="load-more-btn" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 hidden">Load More</button>
-    </section>
+    <h2 style="text-align:center;">Videos</h2>
+    <div class="video-container" id="videoResults"></div>
+    <h2 style="text-align:center;">Playlists</h2>
+    <div class="video-container" id="playlistResults"></div>
 
-    <!-- Playlists Section -->
-    <section class="p-6">
-        <h2 class="text-xl font-bold text-purple-600">🎵 Playlists</h2>
-        <div id="playlist-container" class="scroll-container mt-4"></div>
-    </section>
-
-    <script src="script.js"></script>
     <script>
-        lucide.createIcons(); 
+        const API_KEY = 'YOUR_YOUTUBE_API_KEY';
+        
+        function searchVideos() {
+            let query = document.getElementById('searchQuery').value;
+            let videoResults = document.getElementById('videoResults');
+            let playlistResults = document.getElementById('playlistResults');
+            videoResults.innerHTML = '';
+            playlistResults.innerHTML = '';
+            
+            fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${API_KEY}`)
+            .then(response => response.json())
+            .then(data => {
+                data.items.forEach(item => {
+                    let iframe = document.createElement('iframe');
+                    iframe.width = "320";
+                    iframe.height = "180";
+                    iframe.src = `https://www.youtube.com/embed/${item.id.videoId}`;
+                    videoResults.appendChild(iframe);
+                });
+            });
+            
+            fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=playlist&key=${API_KEY}`)
+            .then(response => response.json())
+            .then(data => {
+                data.items.forEach(item => {
+                    let iframe = document.createElement('iframe');
+                    iframe.width = "320";
+                    iframe.height = "180";
+                    iframe.src = `https://www.youtube.com/embed/videoseries?list=${item.id.playlistId}`;
+                    playlistResults.appendChild(iframe);
+                });
+            });
+        }
+        
+        function showAuthForm() {
+            alert("Authentication system coming soon!");
+        }
     </script>
-
 </body>
 </html>
