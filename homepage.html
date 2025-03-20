@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOME Page</title>
+    <title>Seekho - Learn & Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -18,50 +18,104 @@
 </head>
 <body class="bg-blue-100 text-gray-900">
 
-    <!-- YouTube Search Bar -->
-    <div class="bg-blue-600 p-4 flex justify-center items-center space-x-4">
-        <input id="yt-search" type="text" placeholder="Start learninig..." class="px-3 py-2 rounded w-1/2 bg-white text-gray-700">
-        <button id="search-button" class="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200">Search</button>
-    </div>
-
-    <!-- Header Section -->
+    <!-- Header Section (Fixed) -->
     <header class="bg-blue-500 p-4 flex justify-between items-center shadow-lg">
         <h1 class="text-2xl font-bold text-white">Seekho</h1>
 
         <nav class="flex space-x-6">
-            <a href="#" class="text-white hover:text-blue-200">Home</a>
-            <a href="#" class="text-white hover:text-blue-200">Earn</a>
-            <a href="#" class="text-white hover:text-blue-200">Scholerships</a>
-            <a href="#" class="text-white hover:text-blue-200">Opportunities</a>
+            <a href="#" onclick="loadPage('courses.html')" class="text-white hover:text-blue-200">Courses</a>
+            <a href="#" onclick="loadPage('earn.html')" class="text-white hover:text-blue-200">Earn</a>
+            <a href="#" onclick="loadPage('scholarships.html')" class="text-white hover:text-blue-200">Scholarships</a>
+            <a href="#" onclick="loadPage('opportunities.html')" class="text-white hover:text-blue-200">Opportunities</a>
         </nav>
 
-        <div class="flex space-x-6 items-center">
-            <div class="flex items-center text-white">
-                <i data-lucide="circle-dollar-sign" class="w-6 h-6 mr-2"></i>
-                <span id="coin-count" class="text-lg font-semibold">0</span>
-            </div>
-
+        <div class="flex space-x-4 items-center">
+            <input id="yt-search" type="text" placeholder="Search learning resources..." class="px-3 py-2 rounded bg-white text-gray-700 w-64">
+            <button id="search-button" class="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200">Search</button>
             <a href="#" class="text-white">
                 <i data-lucide="user" class="w-6 h-6"></i> 
             </a>
         </div>
     </header>
 
-    <!-- Videos Section -->
-    <section class="p-6">
-        <h2 class="text-xl font-bold text-blue-600">🎬 Video Results</h2>
-        <div id="video-container" class="scroll-container mt-4"></div>
-        <button id="load-more-btn" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 hidden">Load More</button>
+    <!-- Main Content Section -->
+    <section id="content" class="p-6">
+        <h2 class="text-xl font-bold text-blue-600">🚀 Welcome to Seekho</h2>
+        <p>Your one-stop platform for learning, earning, and finding scholarships.</p>
+
+        <!-- Free Learning Videos -->
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-blue-700">🎬 Free Learning Videos</h3>
+            <div id="video-container" class="scroll-container mt-4"></div>
+        </div>
+
+        <!-- Free Learning Websites -->
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-green-700">🌐 Free Learning Websites</h3>
+            <ul class="list-disc pl-6 text-blue-900">
+                <li><a href="https://www.khanacademy.org" class="text-blue-500 hover:underline" target="_blank">Khan Academy</a> - Free courses on various subjects.</li>
+                <li><a href="https://www.coursera.org" class="text-blue-500 hover:underline" target="_blank">Coursera (Free Courses)</a> - Some free courses available.</li>
+                <li><a href="https://www.edx.org" class="text-blue-500 hover:underline" target="_blank">edX</a> - Learn from top universities.</li>
+                <li><a href="https://www.udemy.com/courses/free/" class="text-blue-500 hover:underline" target="_blank">Udemy Free Courses</a> - Free learning materials.</li>
+                <li><a href="https://www.w3schools.com" class="text-blue-500 hover:underline" target="_blank">W3Schools</a> - Learn coding for free.</li>
+            </ul>
+        </div>
+
+        <!-- Free Courses Section -->
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-purple-700">📚 Free Online Courses</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h4 class="text-md font-semibold">Python for Beginners</h4>
+                    <p>Learn Python with this free course.</p>
+                    <a href="https://www.kaggle.com/learn/python" class="text-blue-500 hover:underline" target="_blank">Start Course</a>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h4 class="text-md font-semibold">HTML & CSS Crash Course</h4>
+                    <p>Master web development fundamentals.</p>
+                    <a href="https://www.freecodecamp.org/" class="text-blue-500 hover:underline" target="_blank">Start Course</a>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h4 class="text-md font-semibold">Data Science with Python</h4>
+                    <p>Learn data science basics.</p>
+                    <a href="https://cs50.harvard.edu/" class="text-blue-500 hover:underline" target="_blank">Start Course</a>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- Playlists Section -->
-    <section class="p-6">
-        <h2 class="text-xl font-bold text-purple-600">🎵 Playlists</h2>
-        <div id="playlist-container" class="scroll-container mt-4"></div>
-    </section>
-
-    <script src="script.js"></script>
     <script>
+        function loadPage(page) {
+            fetch(page)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('content').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading the page:', error));
+        }
+
+        function loadYouTubeVideos() {
+            const videoContainer = document.getElementById('video-container');
+            const videos = [
+                "https://www.youtube.com/embed/rfscVS0vtbw",
+                "https://www.youtube.com/embed/Ke90Tje7VS0",
+                "https://www.youtube.com/embed/mU6anWqZJcc"
+            ];
+
+            videos.forEach(url => {
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.width = "300";
+                iframe.height = "200";
+                iframe.allowFullscreen = true;
+                iframe.classList.add('rounded-lg', 'shadow-lg');
+                videoContainer.appendChild(iframe);
+            });
+        }
+
+        loadYouTubeVideos();
         lucide.createIcons(); 
     </script>
 
