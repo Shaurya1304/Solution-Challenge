@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyACEm_luGr1khnI2RxbOIb1bvKhxk-6R98"; // Replace with your valid API key
+const API_KEY = "12aeb2f7d3msh8563b96ace941a8p18db70jsn3a67856c290c"; // Replace with your valid API key
 const videoContainer = document.getElementById("video-container");
 const playlistContainer = document.getElementById("playlist-container");
 const searchInput = document.getElementById("yt-search");

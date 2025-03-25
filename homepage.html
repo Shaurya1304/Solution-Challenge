@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOME Page</title>
+    <title>Seekho - Learn & Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -14,54 +14,291 @@
             scroll-behavior: smooth;
             padding-bottom: 10px;
         }
-    </style>
+        div {
+            padding: 20px;
+        }
+    </style
 </head>
 <body class="bg-blue-100 text-gray-900">
 
-    <!-- YouTube Search Bar -->
-    <div class="bg-blue-600 p-4 flex justify-center items-center space-x-4">
-        <input id="yt-search" type="text" placeholder="Start learninig..." class="px-3 py-2 rounded w-1/2 bg-white text-gray-700">
-        <button id="search-button" class="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200">Search</button>
-    </div>
-
-    <!-- Header Section -->
+    <!-- Header Section (Fixed) -->
     <header class="bg-blue-500 p-4 flex justify-between items-center shadow-lg">
-        <h1 class="text-2xl font-bold text-white">Seekho</h1>
+        <h1 class="text-4xl font-extrabold text-white tracking-wide drop-shadow-lg font-serif">
+    <a href="homepage.html">Seekho</a>
+</h1>
+
 
         <nav class="flex space-x-6">
-            <a href="#" class="text-white hover:text-blue-200">Home</a>
-            <a href="#" class="text-white hover:text-blue-200">Earn</a>
-            <a href="#" class="text-white hover:text-blue-200">Scholerships</a>
-            <a href="#" class="text-white hover:text-blue-200">Opportunities</a>
+            <a href="#" onclick="loadPage('courses.html')" class="text-white hover:text-blue-200">Courses</a>
+            <a href="#" onclick="loadPage('earn.html')" class="text-white hover:text-blue-200">Earn</a>
+            <a href="#" onclick="loadPage('scholarships.html')" class="text-white hover:text-blue-200">Scholarships</a>
+            <a href="#" onclick="loadPage('opportunities.html')" class="text-white hover:text-blue-200">Opportunities</a>
         </nav>
 
-        <div class="flex space-x-6 items-center">
-            <div class="flex items-center text-white">
-                <i data-lucide="circle-dollar-sign" class="w-6 h-6 mr-2"></i>
-                <span id="coin-count" class="text-lg font-semibold">0</span>
-            </div>
-
+        <div class="flex space-x-4 items-center">
+            <input id="yt-search" type="text" placeholder="Search learning resources..." class="px-3 py-2 rounded bg-white text-gray-700 w-64">
+            <button id="search-button" class="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200">Search</button>
             <a href="#" class="text-white">
                 <i data-lucide="user" class="w-6 h-6"></i> 
             </a>
         </div>
     </header>
 
-    <!-- Videos Section -->
-    <section class="p-6">
-        <h2 class="text-xl font-bold text-blue-600">🎬 Video Results</h2>
-        <div id="video-container" class="scroll-container mt-4"></div>
-        <button id="load-more-btn" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 hidden">Load More</button>
+    <!-- Main Content Section -->
+    <section id="content" class="p-6">
+        <div class="flex flex-col items-center justify-center text-center p-8 shadow-xl rounded-2xl border border-gray-200 max-w-2xl mx-auto font-[Poppins]">
+    <h2 class="text-4xl font-extrabold text-black relative inline-block tracking-wide">
+        Welcome to <span class="text-blue-600 text-4xl font-extrabold tracking-wide drop-shadow-lg font-serif">Seekho</span>
+        <span class="absolute left-1/2 -bottom-2 w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transform -translate-x-1/2 transition-all duration-300"></span>
+    </h2>
+    <p class="text-gray-800 mt-3 text-lg max-w-lg font-medium leading-relaxed">
+        Your one-stop platform for <span class="font-semibold text-blue-500">learning</span>, 
+        <span class="font-semibold text-green-500">earning</span>, and 
+        <span class="font-semibold text-purple-500">finding scholarships</span>.
+    </p>
+</div>
+
+
+
+
+
+
+
+        <!-- Free Learning Videos -->
+        <div class="mt-6">
+            <h3 class="text-3xl font-extrabold text-black text-center relative inline-block">
+                  Free Learning Videos
+                  <span class="absolute left-1/2 -bottom-2 w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transform -translate-x-1/2 transition-all duration-300 group-hover:w-32"></span>
+            </h3>
+
+            <div id="video-container" class="scroll-container mt-4"></div>
+        </div>
+
+        <!-- Free Learning Websites -->
+
+
+
+
+<style>
+  .scroll-container { display: flex; align-items: center; padding: 16px; border-radius: 12px; background: #f8f9fa; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); }
+  .scroll-content { display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; white-space: nowrap; padding: 10px 40px; scrollbar-width: none; }
+  .scroll-content::-webkit-scrollbar { display: none; }
+  .scroll-btn { background: none; color: #3498db; border: 2px solid #3498db; padding: 10px; font-size: 18px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+  .scroll-btn:hover { background: #3498db; color: white; transform: scale(1.1); }
+  
+  /* Enhanced Heading */
+  .section-heading { 
+    font-size: 2rem; font-weight: bold; text-align: center; color: #2c3e50; 
+    margin-bottom: 12px; padding-bottom: 10px; position: relative; 
+    text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; 
+  }
+  .section-heading::after {
+    content: ""; width: 80px; height: 4px; background: linear-gradient(45deg, #3498db, #e74c3c); 
+    display: block; margin: 5px auto 0; border-radius: 2px; transition: 0.3s;
+  }
+  .section-heading:hover { color: #e74c3c; transform: scale(1.05); }
+  .section-heading:hover::after { width: 100px; background: linear-gradient(45deg, #e74c3c, #3498db); }
+
+  /* Course Cards */
+  .course-card { padding: 16px; border-radius: 10px; min-width: 230px; max-width: 230px; text-align: center; color: white; font-weight: bold; transition: 0.3s; word-wrap: break-word; overflow: hidden; white-space: normal; }
+  .course-card:hover { transform: translateY(-5px); box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); }
+  .course-link { display: inline-block; margin-top: 8px; padding: 8px 12px; background: white; color: black; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
+  .course-link:hover { background: rgba(255, 255, 255, 0.8); color: #333; }
+
+  /* Gradient Backgrounds */
+  .course-card:nth-child(1) { background: linear-gradient(45deg, #ff7675, #e74c3c); } 
+  .course-card:nth-child(2) { background: linear-gradient(45deg, #74b9ff, #3498db); } 
+  .course-card:nth-child(3) { background: linear-gradient(45deg, #55efc4, #2ecc71); } 
+  .course-card:nth-child(4) { background: linear-gradient(45deg, #feca57, #f39c12); } 
+  .course-card:nth-child(5) { background: linear-gradient(45deg, #a29bfe, #9b59b6); } 
+  .course-card:nth-child(6) { background: linear-gradient(45deg, #48dbfb, #1abc9c); }
+</style>
+
+<div class="px-6 py-4">
+    <h2 class="section-heading">Free Learning Resources</h2>
+    <div class="scroll-container">
+        <button class="scroll-btn" onclick="document.getElementById('scrollContent').scrollLeft -= 200;">&#9664;</button>
+        <div id="scrollContent" class="scroll-content">
+            <div class="course-card"><span>Khan Academy</span><br><a href="https://www.khanacademy.org" target="_blank" class="course-link">Visit</a></div>
+            <div class="course-card"><span>Coursera (Free Courses)</span><br><a href="https://www.coursera.org" target="_blank" class="course-link">Visit</a></div>
+            <div class="course-card"><span>edX</span><br><a href="https://www.edx.org" target="_blank" class="course-link">Visit</a></div>
+            <div class="course-card"><span>Udemy Free Courses</span><br><a href="https://www.udemy.com/courses/free/" target="_blank" class="course-link">Visit</a></div>
+            <div class="course-card"><span>W3Schools</span><br><a href="https://www.w3schools.com" target="_blank" class="course-link">Visit</a></div>
+            <div class="course-card"><span>GeeksforGeeks</span><br><a href="https://www.geeksforgeeks.org" target="_blank" class="course-link">Visit</a></div>
+        </div>
+        <button class="scroll-btn" onclick="document.getElementById('scrollContent').scrollLeft += 200;">&#9654;</button>
+    </div>
+</div>
+
+
+
+
+ <!-- GEMINI -->
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 50vh; padding: 40px; background: linear-gradient(135deg, #23395B, #8B0000); border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); color: white;">
+
+    <!-- Left: Animated Heading -->
+    <div style="flex: 1; text-align: left;">
+        <h1 style="font-size: 3rem; font-weight: bold; letter-spacing: 2px; animation: fadeIn 2s ease-in-out;">
+             Welcome to <span style="color: yellow;">Seekho AI Chat!</span>
+        </h1>
+        <p style="font-size: 1.5rem; opacity: 0.8; margin-top: 10px; animation: slideUp 2s ease-in-out;">
+            Ask anything and get instant answers from Gemini AI.
+        </p>
+    </div>
+
+    <!-- Right: Chatbox -->
+    <div style="width: 35%; min-width: 320px; height: 100%; display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px;">
+
+        <h2 style="text-align: center; font-size: 18px; font-weight: bold; color: white; margin-bottom: 12px;">
+             Chat with Gemini AI 
+        </h2>
+
+        <div style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.15);">
+            <div style="background: rgba(255, 255, 255, 0.2); padding: 8px; border-radius: 6px; align-self: flex-start; max-width: 75%; font-size: 14px;">
+                👋 Hi! I'm Gemini AI. How can I assist you today?
+            </div>
+           
+        </div>
+
+        <div style="display: flex; padding-top: 12px;">
+            <input type="text" placeholder="Type a message..." 
+                style="flex: 1; padding: 10px; border: none; border-radius: 5px; background: rgba(255, 255, 255, 0.3); color: white; font-size: 14px; outline: none;">
+            <button style="padding: 10px 14px; border: none; border-radius: 5px; background: white; color: black; cursor: pointer; margin-left: 10px; font-size: 14px;">
+                Send
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Free Courses Section -->
+        <div class="mt-10 px-4 md:px-10 lg:px-20">
+            <!-- Background Wrapper to Make the Section Stand Out -->
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-700 p-10 rounded-2xl shadow-2xl relative text-white">
+                
+                <!-- Glow Effect -->
+                <div class="absolute inset-0 bg-white opacity-10 blur-lg rounded-2xl"></div>
+        
+                <h3 class="text-3xl font-bold text-center relative z-10">✨ Free Online Courses ✨</h3>
+        
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6 relative z-10">
+                    
+                    <!-- Python Course -->
+                    <div class="bg-white/90 p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 transition-all duration-300 hover:scale-105 text-gray-900">
+                        <h4 class="text-xl font-semibold">🐍 Python for Beginners</h4>
+                        <p class="text-gray-600 mt-2">Learn Python with this free course.</p>
+                        <a href="https://www.kaggle.com/learn/python" 
+                           class="block text-white bg-blue-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-blue-600 transition-all duration-300"
+                           target="_blank">
+                            Start Course 🚀
+                        </a>
+                    </div>
+        
+                    <!-- HTML & CSS Course -->
+                    <div class="bg-white/90 p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 transition-all duration-300 hover:scale-105 text-gray-900">
+                        <h4 class="text-xl font-semibold">🌐 HTML & CSS Crash Course</h4>
+                        <p class="text-gray-600 mt-2">Master web development fundamentals.</p>
+                        <a href="https://www.freecodecamp.org/" 
+                           class="block text-white bg-green-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-green-600 transition-all duration-300"
+                           target="_blank">
+                            Start Course 💻
+                        </a>
+                    </div>
+        
+                    <!-- Data Science Course -->
+                    <div class="bg-white/90 p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 transition-all duration-300 hover:scale-105 text-gray-900">
+                        <h4 class="text-xl font-semibold">📊 Data Science with Python</h4>
+                        <p class="text-gray-600 mt-2">Learn data science basics.</p>
+                        <a href="https://cs50.harvard.edu/" 
+                           class="block text-white bg-purple-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-purple-600 transition-all duration-300"
+                           target="_blank">
+                            Start Course 📈
+                        </a>
+                    </div>
+        
+                    <!-- JavaScript Course -->
+                    <div class="bg-white/90 p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 transition-all duration-300 hover:scale-105 text-gray-900">
+                        <h4 class="text-xl font-semibold">⚡ JavaScript Basics</h4>
+                        <p class="text-gray-600 mt-2">Learn JavaScript from scratch.</p>
+                        <a href="https://www.javascript.info/" 
+                           class="block text-white bg-yellow-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-yellow-600 transition-all duration-300"
+                           target="_blank">
+                            Start Course 🔥
+                        </a>
+                    </div>
+        
+                    <!-- AI & Machine Learning -->
+                    <div class="bg-white/90 p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 transition-all duration-300 hover:scale-105 text-gray-900">
+                        <h4 class="text-xl font-semibold">🤖 AI & Machine Learning</h4>
+                        <p class="text-gray-600 mt-2">Master AI concepts and ML basics.</p>
+                        <a href="https://www.fast.ai/" 
+                           class="block text-white bg-red-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-red-600 transition-all duration-300"
+                           target="_blank">
+                            Start Course 🤖
+                        </a>
+                    </div>
+        
+                    <!-- SQL for Beginners -->
+                    <div class="bg-white/90 p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 transition-all duration-300 hover:scale-105 text-gray-900">
+                        <h4 class="text-xl font-semibold">💾 SQL for Beginners</h4>
+                        <p class="text-gray-600 mt-2">Learn database management with SQL.</p>
+                        <a href="https://sqlzoo.net/" 
+                           class="block text-white bg-indigo-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-indigo-600 transition-all duration-300"
+                           target="_blank">
+                            Start Course 🛠️
+                        </a>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+             
     </section>
 
-    <!-- Playlists Section -->
-    <section class="p-6">
-        <h2 class="text-xl font-bold text-purple-600">🎵 Playlists</h2>
-        <div id="playlist-container" class="scroll-container mt-4"></div>
-    </section>
-
-    <script src="script.js"></script>
     <script>
+        function loadPage(page) {
+            fetch(page)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('content').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading the page:', error));
+        }
+
+        function loadYouTubeVideos() {
+            const videoContainer = document.getElementById('video-container');
+            const videos = [
+                "https://www.youtube.com/embed/rfscVS0vtbw",
+                "https://www.youtube.com/embed/Ke90Tje7VS0",
+                "https://www.youtube.com/embed/mU6anWqZJcc",
+                "https://www.youtube.com/embed/SeuS84YeJVc?si=FWKN-pZ3CtiPzqGs"
+            ];
+
+            videos.forEach(url => {
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.width = "300";
+                iframe.height = "200";
+                iframe.allowFullscreen = true;
+                iframe.classList.add('rounded-lg', 'shadow-lg');
+                videoContainer.appendChild(iframe);
+            });
+        }
+
+        loadYouTubeVideos();
         lucide.createIcons(); 
     </script>
 
