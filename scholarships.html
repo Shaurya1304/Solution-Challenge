@@ -3,30 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scholarships</title>
+    <title>Scholarships - Seekho</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-blue-100 text-gray-900">
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f0f9ff; /* Light blue background */
+            color: #333; /* Dark text for readability */
+            font-family: Arial, sans-serif;
+        }
 
-   
-    <section id="content" class="p-6">
-        <h2 class="text-xl font-bold text-purple-600">🎓 Scholarships</h2>
-        <p>Find national and international scholarships to support your education.</p>
-    
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-            <div class="bg-white p-4 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold">National Scholarships</h3>
-                <p>Apply for government and private scholarships.</p>
-                <button class="bg-purple-500 text-white px-4 py-2 rounded mt-2">Check Now</button>
+        header {
+            background-color: #1e3a8a; /* Dark blue background */
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border-bottom: 4px solid #38bdf8; /* Light blue border */
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        header p {
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        /* Content Section */
+        #content {
+            padding: 40px 20px;
+            margin: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1d4ed8; /* Light blue color */
+            margin-bottom: 20px;
+            text-align: center;
+            text-decoration: underline;
+        }
+
+        /* Scholarship Cards */
+        .scholarship-card, .exam-card {
+            background-color: #ecfeff; /* Light blue background for cards */
+            padding: 20px;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .scholarship-card a, .exam-card a {
+            color: #10b981; /* Light green */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .scholarship-card a:hover, .exam-card a:hover {
+            text-decoration: underline;
+        }
+
+        .scholarship-card:hover, .exam-card:hover {
+            transform: scale(1.05);
+        }
+
+        .section-container {
+            margin-top: 40px;
+            padding: 20px; /* Add padding for separation */
+            background-color: #ffffff; /* White background for each section */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .scroll-container {
+            max-height: 450px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Make it responsive */
+        .section-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Card Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        /* Exam Cards */
+        .exam-card {
+            background-color: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+            text-align: center;
+        }
+
+        .exam-card h3 {
+            color: #1e40af; /* Dark blue for exam titles */
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Added padding between sections */
+        .gov-scholarships, .private-scholarships, .exam-scholarships {
+            margin-bottom: 40px; /* Add margin between each section */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Seekho - Scholarships & Exams</h1>
+        <p>Your gateway to discovering scholarships and related exams.</p>
+    </header>
+
+    <!-- Content Section -->
+    <section id="content">
+        <!-- Government Scholarships Section -->
+        <div class="section-container gov-scholarships">
+            <div class="section-title">Government Scholarships</div>
+            <div class="scroll-container grid-container">
+                <div class="scholarship-card">
+                    <h3>Ayush Scholarship</h3>
+                    <p>Scholarship for students in the Ayush program pursuing traditional medicine studies.</p>
+                    <a href="https://www.ayush.gov.in/scholarships" target="_blank">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3>Government of India Scholarship</h3>
+                    <p>Financial assistance for underprivileged students across various fields of study.</p>
+                    <a href="https://scholarships.gov.in" target="_blank">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3>National Merit Scholarship</h3>
+                    <p>Awarded to students excelling in academics and extracurricular activities.</p>
+                    <a href="https://www.scholarships.gov.in/national-merit" target="_blank">Learn More</a>
+                </div>
+                <!-- Add more scholarship cards here -->
             </div>
-    
-            <div class="bg-white p-4 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold">International Scholarships</h3>
-                <p>Study abroad with top-funded scholarships.</p>
-                <button class="bg-purple-500 text-white px-4 py-2 rounded mt-2">Learn More</button>
+        </div>
+
+        <!-- Private Scholarships Section -->
+        <div class="section-container private-scholarships">
+            <div class="section-title">Private Scholarships</div>
+            <div class="scroll-container grid-container">
+                <div class="scholarship-card">
+                    <h3>Tata Scholarships</h3>
+                    <p>Scholarships for students pursuing higher education in India and abroad, supported by the Tata Trust.</p>
+                    <a href="https://www.tatatrusts.org/what-we-do/education-scholarships" target="_blank">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3>HDFC Educational Crisis Scholarship Support</h3>
+                    <p>Provides scholarships to students from underprivileged families for continued education.</p>
+                    <a href="https://www.hdfc.com/education-crisis-scholarship" target="_blank">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3>Google Scholarships</h3>
+                    <p>Scholarships for students pursuing degrees in computer science, technology, engineering, and related fields.</p>
+                    <a href="https://buildyourfuture.withgoogle.com/scholarships/" target="_blank">Learn More</a>
+                </div>
+                <!-- Add more scholarship cards here -->
+            </div>
+        </div>
+
+        <!-- Scholarship Exams Section -->
+        <div class="section-container exam-scholarships">
+            <div class="section-title">Scholarship Exams</div>
+            <div class="scroll-container grid-container">
+                <div class="exam-card">
+                    <h3>SEATS</h3>
+                    <p>Scheme for Early Attraction of Talent (SEATS) exam identifies and nurtures young talent.</p>
+                    <a href="https://www.example.com/seats" target="_blank">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3>NTSE</h3>
+                    <p>National Talent Search Exam (NTSE) helps identify and nurture talented students in India.</p>
+                    <a href="https://www.ntse.nic.in" target="_blank">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3>KVPY</h3>
+                    <p>Kishore Vaigyanik Protsahan Yojana (KVPY) provides scholarships for students pursuing science education.</p>
+                    <a href="https://kvpy.iisc.ernet.in" target="_blank">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3>VSTS</h3>
+                    <p>Velammal Science Talent Search Exams (VSTS) aims to promote science among students.</p>
+                    <a href="https://www.velammal.org/vsts" target="_blank">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3>SHE</h3>
+                    <p>Scholarship for Higher Education (SHE) offers financial assistance to students pursuing higher studies.</p>
+                    <a href="https://www.she.com" target="_blank">Learn More</a>
+                </div>
+                <!-- Add more exam cards here -->
             </div>
         </div>
     </section>
-    
+
 </body>
 </html>
