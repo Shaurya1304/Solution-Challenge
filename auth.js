@@ -126,3 +126,71 @@
         }
     })
  })
+
+ function signUpUser(email, password, username) {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            const userId = userCredential.user.uid; // Get Firebase user ID
+            
+            // 🔹 Save user data with coins field in Firestore
+            db.collection("users").doc(userId).set({
+                username: username,
+                email: email,
+                coin: 100 // Initialize coins to 0
+            }).then(() => {
+                console.log("User registered with coins!");
+            }).catch(error => {
+                console.error("Error saving user data:", error);
+            });
+        })
+        .catch((error) => {
+            console.error("Signup Error:", error);
+        });
+}
+
+
+function loginUser(email, password) {
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            const userId = userCredential.user.uid;
+
+            // 🔹 Fetch user data from Firestore
+            db.collection("users").doc(userId).get().then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    document.getElementById("coin-count").innerText = userData.coins; // Update UI
+                }
+            }).catch(error => {
+                console.error("Error fetching user data:", error);
+            });
+        })
+        .catch((error) => {
+            console.error("Login Error:", error);
+        });
+}
+
+
+function hideVideo() {
+    document.getElementById("video-player").style.display = "none";
+    document.getElementById("play-ad-btn").style.display = "block";
+
+    const user = firebase.auth().currentUser;
+    if (user) {
+        const userRef = db.collection("users").doc(user.uid);
+
+        // 🔹 Increase coin count in Firestore
+        userRef.get().then((doc) => {
+            if (doc.exists) {
+                let currentCoins = doc.data().coins;
+                let newCoins = currentCoins + 10;
+
+                userRef.update({ coins: newCoins }).then(() => {
+                    document.getElementById("coin-count").innerText = newCoins; // Update UI
+                    console.log("Coins updated successfully!");
+                });
+            }
+        }).catch(error => {
+            console.error("Error updating coins:", error);
+        });
+    }
+}

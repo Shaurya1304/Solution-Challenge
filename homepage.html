@@ -8,16 +8,13 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .scroll-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 16px;
-            scroll-behavior: smooth;
-            padding-bottom: 10px;
-        }
-        div {
-            padding: 20px;
-        }
-    </style
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+}
+    </style>
 </head>
 <body class="bg-blue-100 text-gray-900">
 
@@ -214,66 +211,96 @@
     </div>
 
     <script>
-        const apiKey = 'AIzaSyA9v_YNFHB8M_WKtSaMPWdOymhquJQfPXU';  // Replace with your actual Gemini API Key
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AIzaSyA9v_YNFHB8M_WKtSaMPWdOymhquJQfPXU}`;
+       const apiKey = 'AIzaSyA9v_YNFHB8M_WKtSaMPWdOymhquJQfPXU';  // Ensure this is your actual API key
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+function sendMessage() {
+    const userInput = document.getElementById('user-input');
+    const message = userInput.value;
 
-        // Function to send a message to Gemini AI
-        function sendMessage() {
-            const userInput = document.getElementById('user-input');
-            const message = userInput.value;
-            
-            if (message) {
-                // Show user message in the chat window
-                const userMessageDiv = document.createElement('div');
-                userMessageDiv.style.background = 'rgba(255, 255, 255, 0.2)';
-                userMessageDiv.style.padding = '8px';
-                userMessageDiv.style.borderRadius = '6px';
-                userMessageDiv.style.alignSelf = 'flex-end';
-                userMessageDiv.style.maxWidth = '75%';
-                userMessageDiv.style.fontSize = '14px';
-                userMessageDiv.textContent = message;
-                document.getElementById('chat-container').appendChild(userMessageDiv);
+    if (message) {
+        // Show user message in the chat window
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.style.background = 'rgba(255, 255, 255, 0.2)';
+        userMessageDiv.style.padding = '8px';
+        userMessageDiv.style.borderRadius = '6px';
+        userMessageDiv.style.alignSelf = 'flex-end';
+        userMessageDiv.style.maxWidth = '75%';
+        userMessageDiv.style.fontSize = '14px';
+        userMessageDiv.textContent = message;
+        document.getElementById('chat-container').appendChild(userMessageDiv);
 
-                // Send the message to Gemini API using the fetch method
-                const requestData = {
-                    "contents": [{
-                        "parts": [{"text": message}]
-                    }]
-                };
+        // Prepare the request data
+        const requestData = {
+            "contents": [{
+                "parts": [{"text": message}]
+            }]
+        };
 
-                console.log('Sending Request:', requestData); // Log the request being sent
+        console.log('Sending Request:', requestData); // Log the request being sent
 
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response:', data); // Log the response data
+        // Replace your existing fetch and response handling with this:
+fetch(url, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestData),
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('Response:', data); // Log the response data
+    
+    // Add error checking to safely access the response data
+    let responseText = 'No response received';
+    
+    // Check if the expected data structure exists
+    if (data && data.contents && data.contents[0] && 
+        data.contents[0].parts && data.contents[0].parts[0]) {
+        responseText = data.contents[0].parts[0].text || 'Empty response';
+    } else if (data && data.candidates && data.candidates[0] && 
+               data.candidates[0].content && data.candidates[0].content.parts && 
+               data.candidates[0].content.parts[0]) {
+        // Alternative response structure
+        responseText = data.candidates[0].content.parts[0].text || 'Empty response';
+    } else {
+        // If we can't find the expected structure, show the raw response
+        responseText = 'Unexpected response format: ' + JSON.stringify(data).substring(0, 100) + '...';
+    }
 
-                    // Show Gemini's response in the chat window
-                    const geminiResponseDiv = document.createElement('div');
-                    geminiResponseDiv.style.background = 'rgba(255, 255, 255, 0.2)';
-                    geminiResponseDiv.style.padding = '8px';
-                    geminiResponseDiv.style.borderRadius = '6px';
-                    geminiResponseDiv.style.alignSelf = 'flex-start';
-                    geminiResponseDiv.style.maxWidth = '75%';
-                    geminiResponseDiv.style.fontSize = '14px';
-                    geminiResponseDiv.textContent = data.contents[0].parts[0].text; // Adjust based on actual API response structure
-                    document.getElementById('chat-container').appendChild(geminiResponseDiv);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+    // Show Gemini's response in the chat window
+    const geminiResponseDiv = document.createElement('div');
+    geminiResponseDiv.style.background = 'rgba(255, 255, 255, 0.2)';
+    geminiResponseDiv.style.padding = '8px';
+    geminiResponseDiv.style.borderRadius = '6px';
+    geminiResponseDiv.style.alignSelf = 'flex-start';
+    geminiResponseDiv.style.maxWidth = '75%';
+    geminiResponseDiv.style.fontSize = '14px';
+    geminiResponseDiv.textContent = responseText;
+    document.getElementById('chat-container').appendChild(geminiResponseDiv);
+})
+.catch(error => {
+    console.error('Error:', error);
+    const errorDiv = document.createElement('div');
+    errorDiv.style.background = 'rgba(255, 0, 0, 0.2)';
+    errorDiv.style.padding = '8px';
+    errorDiv.style.borderRadius = '6px';
+    errorDiv.style.alignSelf = 'flex-start';
+    errorDiv.style.maxWidth = '75%';
+    errorDiv.style.fontSize = '14px';
+    errorDiv.textContent = 'Error: ' + error.message;
+    document.getElementById('chat-container').appendChild(errorDiv);
+});
 
-                // Clear the input field after sending the message
-                userInput.value = '';
-            }
-        }
-    </script>
+        // Clear the input field after sending the message
+        userInput.value = '';
+    }
+}
+</script>
 
 
 
