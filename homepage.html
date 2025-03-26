@@ -19,35 +19,25 @@
 <body class="bg-blue-100 text-gray-900">
 
     <!-- Header Section (Fixed) -->
-    <header class="bg-gradient-to-r from-blue-600 to-blue-400 p-4 flex justify-between items-center shadow-lg">
-        <!-- Logo -->
+    <header class="bg-blue-500 p-4 flex justify-between items-center shadow-lg">
         <h1 class="text-4xl font-extrabold text-white tracking-wide drop-shadow-lg font-serif">
-            <a href="homepage.html" class="hover:text-cyan-300 transition">Seekho</a>
-        </h1>
-    
-        <!-- Navigation Links -->
+    <a href="homepage.html">Seekho</a>
+</h1>
+
+
         <nav class="flex space-x-6">
-            <a href="#" onclick="loadPage('earn.html')" class="text-white font-semibold hover:text-cyan-300 transition">Earn</a>
-            <a href="#" onclick="loadPage('scholarships.html')" class="text-white font-semibold hover:text-cyan-300 transition">Scholarships</a>
-            <a href="#" onclick="loadPage('opportunities.html')" class="text-white font-semibold hover:text-cyan-300 transition">Opportunities</a>
+            <a href="#" onclick="loadPage('courses.html')" class="text-white hover:text-blue-200">Courses</a>
+            <a href="#" onclick="loadPage('earn.html')" class="text-white hover:text-blue-200">Earn</a>
+            <a href="#" onclick="loadPage('scholarships.html')" class="text-white hover:text-blue-200">Scholarships</a>
+            <a href="#" onclick="loadPage('opportunities.html')" class="text-white hover:text-blue-200">Opportunities</a>
         </nav>
-    
-        <!-- Right Section -->
-        <div class="flex space-x-6 items-center">
-            <!-- Coin Counter -->
-            <div class="flex items-center space-x-2 px-3 py-2 rounded-lg shadow-md bg-gradient-to-r from-blue-800 to-blue-600 text-white">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" alt="Coin" class="w-6 h-6">
-                <span id="coin-count" class="font-bold text-lg">100</span>
-            </div>
-    
-            <!-- Search Box -->
-            <input id="yt-search" type="text" placeholder="Search learning resources..." 
-                class="px-3 py-2 rounded bg-white text-gray-700 w-64 shadow-md focus:ring-2 focus:ring-cyan-300">
-    
-            <button id="search-button" 
-                class="bg-gradient-to-r from-blue-800 to-blue-600 text-white px-4 py-2 rounded hover:from-blue-700 hover:to-blue-500 transition shadow-md">
-                Search
-            </button>
+
+        <div class="flex space-x-4 items-center">
+            <input id="yt-search" type="text" placeholder="Search learning resources..." class="px-3 py-2 rounded bg-white text-gray-700 w-64">
+            <button id="search-button" class="bg-white text-blue-500 px-4 py-2 rounded hover:bg-gray-200">Search</button>
+            <a href="#" class="text-white">
+                <i data-lucide="user" class="w-6 h-6"></i> 
+            </a>
         </div>
     </header>
 
@@ -222,7 +212,7 @@
 
     <script>
        const apiKey = 'AIzaSyA9v_YNFHB8M_WKtSaMPWdOymhquJQfPXU';  // Ensure this is your actual API key
-       const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}';
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 function sendMessage() {
     const userInput = document.getElementById('user-input');
     const message = userInput.value;
@@ -397,7 +387,7 @@ fetch(url, {
                         <a href="https://sqlzoo.net/" 
                            class="block text-white bg-indigo-500 px-6 py-2 rounded-lg mt-4 text-center font-medium hover:bg-indigo-600 transition-all duration-300"
                            target="_blank">
-                            Start Course 🛠
+                            Start Course 🛠️
                         </a>
                     </div>
         
