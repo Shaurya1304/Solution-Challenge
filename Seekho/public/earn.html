@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertisements & Surveys</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
+    <style>
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            scroll-behavior: smooth;
+            padding-bottom: 10px;
+        }
+        #video-player {
+            display: none;
+            width: 100%;
+            max-width: 640px;
+            margin: auto;
+        }
+        .ad-button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 16px;
+            position: relative;
+        }
+        #play-ad-btn:hover {
+            background-color: #c53030;
+            transform: scale(1.05);
+            transition: all 0.3s ease-in-out;
+        }
+        .tooltip {
+            position: absolute;
+            top: -30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
+        #play-ad-btn:hover + .tooltip {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Header -->
+    <header class="bg-blue-600 p-4 text-white text-center text-2xl font-bold">
+        Advertisements & Surveys
+    </header>
+
+    <!-- Sponsored Ads Section -->
+    <section class="p-6 text-center bg-gray-200 rounded-lg shadow-lg relative">
+    <h2 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 tracking-wide drop-shadow-md">
+        🎥 Sponsored Ads
+    </h2>
+
+    <!-- Button with Note -->
+    <div class="flex flex-col items-center mt-4">
+        <button id="play-ad-btn" 
+                class="bg-red-600 text-white px-5 py-2 rounded-full text-lg font-semibold shadow-md hover:bg-red-700 transition duration-300">
+            ▶️ Watch Ad
+        </button>
+        <span class="text-sm text-gray-700 mt-2 font-medium">💰 Click to earn coins!</span>
+    </div>
+
+    <!-- Video Player -->
+    <video id="video-player" class="mt-4 hidden rounded-lg shadow-lg border border-gray-300 w-full max-w-md mx-auto" controls onended="hideVideo()">
+        <source id="video-source" src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</section>
+
+
+
+    <!-- Sponsored Banners Section -->
+ <section class="p-6 text-center bg-gradient-to-br from-gray-100 to-gray-300 rounded-lg shadow-xl mt-6">
+    <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 tracking-wide drop-shadow-lg 
+        hover:underline hover:decoration-wavy hover:decoration-blue-500 transition-all duration-300">
+        🎯 Sponsored Banners
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <!-- Banner 1 -->
+        <div class="p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-300 bg-white">
+            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" 
+                 alt="Google Ad 1" class="w-full rounded-md">
+            <a href="https://www.google.com" target="_blank" 
+               class="block mt-3 text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-300">
+               🔗 Visit Google
+            </a>
+        </div>
+
+        <!-- Banner 2 -->
+        <div class="p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-300 bg-white">
+            <img src="https://www.gstatic.com/webp/gallery/2.jpg" 
+                 alt="Google Ad 2" class="w-full rounded-md">
+            <a href="https://www.google.com" target="_blank" 
+               class="block mt-3 text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-300">
+               🔗 Visit Google
+            </a>
+        </div>
+
+        <!-- Banner 3 -->
+        <div class="p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-300 bg-white">
+            <img src="https://www.gstatic.com/webp/gallery/4.jpg" 
+                 alt="Google Ad 3" class="w-full rounded-md">
+            <a href="https://www.google.com" target="_blank" 
+               class="block mt-3 text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-300">
+               🔗 Visit Google
+            </a>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Surveys Section -->
+    <section class="p-8 bg-gradient-to-br from-gray-100 to-gray-300 rounded-lg shadow-xl mt-6">
+    <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600 text-center mb-6 tracking-wide drop-shadow-lg 
+        hover:underline hover:decoration-wavy hover:decoration-blue-500 transition-all duration-300">
+        🚀 Participate in Surveys
+    </h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Survey Card 1 -->
+        <div class="p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 
+            bg-gradient-to-br from-purple-400 via-blue-500 to-indigo-600 text-white">
+            <h3 class="font-semibold text-lg">📊 Company A Survey</h3>
+            <p class="opacity-90 mt-2">Help us improve our services.</p>
+            <button class="bg-white text-blue-700 px-4 py-2 rounded mt-4 font-bold hover:bg-gray-200 transition-colors duration-300">
+                Take Survey
+            </button>
+        </div>
+
+        <!-- Survey Card 2 -->
+        <div class="p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 
+            bg-gradient-to-br from-pink-400 via-red-500 to-orange-600 text-white">
+            <h3 class="font-semibold text-lg">📝 Company B Feedback</h3>
+            <p class="opacity-90 mt-2">Your opinion matters to us!</p>
+            <button class="bg-white text-red-700 px-4 py-2 rounded mt-4 font-bold hover:bg-gray-200 transition-colors duration-300">
+                Take Survey
+            </button>
+        </div>
+
+        <!-- Survey Card 3 -->
+        <div class="p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 
+            bg-gradient-to-br from-green-400 via-teal-500 to-cyan-600 text-white">
+            <h3 class="font-semibold text-lg">🎯 Company C Market Research</h3>
+            <p class="opacity-90 mt-2">Participate and earn rewards.</p>
+            <button class="bg-white text-green-700 px-4 py-2 rounded mt-4 font-bold hover:bg-gray-200 transition-colors duration-300">
+                Take Survey
+            </button>
+        </div>
+    </div>
+</section>
+
+
+    <script>
+        // Ensure Firebase is initialized
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+
+// List of ad videos
+const ads = [
+    "https://media.w3.org/2010/05/sintel/trailer.mp4",
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+];
+
+// Ensure the button exists before adding event listener
+document.addEventListener("DOMContentLoaded", function () {
+    const playButton = document.getElementById("play-ad-btn");
+    const videoPlayer = document.getElementById("video-player");
+    const videoSource = document.getElementById("video-source");
+
+    if (playButton) {
+        playButton.addEventListener("click", function () {
+            const randomAd = ads[Math.floor(Math.random() * ads.length)];
+
+            videoSource.src = randomAd;
+            videoPlayer.load();
+            videoPlayer.style.display = "block";
+            videoPlayer.play().catch(error => console.error("Playback error:", error));
+
+            this.style.display = "none"; // Hide button
+        });
+    }
+});
+
+// Function to hide video and increase coins when the ad ends
+function hideVideo() {
+    const videoPlayer = document.getElementById("video-player");
+    const playButton = document.getElementById("play-ad-btn");
+    const coinCountElement = document.getElementById("coin-count");
+
+    videoPlayer.style.display = "none";
+    playButton.style.display = "block"; // Show button again
+
+    // Update Firestore coin count
+    const user = firebase.auth().currentUser;
+    if (user) {
+        const userRef = db.collection("users").doc(user.uid);
+        userRef.get().then((doc) => {
+            if (doc.exists) {
+                let currentCoins = doc.data().coins || 0;
+                let newCoins = currentCoins + 1;
+
+                userRef.update({ coins: newCoins }).then(() => {
+                    coinCountElement.innerText = newCoins; // Update UI
+                    console.log("Coins updated successfully!");
+                });
+            }
+        }).catch(error => console.error("Error updating coins:", error));
+    }
+}
+
+    </script>
+</body>
+</html>
