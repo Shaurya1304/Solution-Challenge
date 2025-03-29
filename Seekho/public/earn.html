@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advertisements & Surveys</title>
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="auth.js"></script>
     <style>
@@ -29,7 +33,9 @@
             display: none;
             width: 100%;
             max-width: 640px;
-            margin: auto;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .ad-button-container {
             display: flex;
@@ -134,6 +140,59 @@
         .survey-card button:hover {
             background: #f0f0f0;
         }
+
+        .reward-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 215, 0, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed !important;
+        }
+
+        .skip-ad-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+            transition: background-color 0.3s;
+        }
+
+        .skip-ad-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
@@ -152,10 +211,13 @@
                 </button>
                 <div class="tooltip">Watch and earn coins!</div>
             </div>
-            <video id="video-player" class="mt-4 hidden rounded-lg shadow-lg border border-gray-300 w-full max-w-md mx-auto" controls onended="hideVideo()">
-                <source id="video-source" src="" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <div class="video-container">
+                <video id="video-player" controls playsinline>
+                    <source id="video-source" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <button id="skip-ad-btn" class="skip-ad-btn">Skip Ad in 5s</button>
+            </div>
         </div>
 
         <!-- Sponsored Banners Section -->
@@ -211,73 +273,216 @@
     </section>
 
     <script>
-        // Load the common header
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-container').innerHTML = data;
-                // Initialize Lucide icons
-                lucide.createIcons();
-            })
-            .catch(error => console.error('Error loading header:', error));
+        // Firebase configuration (replace with your config)
+        const firebaseConfig = {
+            // Your Firebase config here
+            apiKey: "AIzaSyBjhJTxvhBZXCnYqkDH6AFOdRZ3ua_e-Vw",
+            authDomain: "seekho-e5c4b.firebaseapp.com",
+            projectId: "seekho-e5c4b",
+            storageBucket: "seekho-e5c4b.appspot.com",
+            messagingSenderId: "1031058737085",
+            appId: "1:1031058737085:web:4b40c44ed89f90ce83c6aa",
+            measurementId: "G-YWBP0BWKLR"
+        };
 
-        // Ensure Firebase is initialized
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
 
-        // List of ad videos
-        const ads = [
-            "https://media.w3.org/2010/05/sintel/trailer.mp4",
-            "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-            "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        // Array of sample ad videos
+        const adVideos = [
+            {
+                url: 'https://www.w3schools.com/html/mov_bbb.mp4', // Test video that's known to work
+                reward: 5
+            },
+            {
+                url: 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4', // Another test video
+                reward: 10
+            }
         ];
 
-        // Initialize video functionality
-        document.addEventListener("DOMContentLoaded", function () {
-            const playButton = document.getElementById("play-ad-btn");
-            const videoPlayer = document.getElementById("video-player");
-            const videoSource = document.getElementById("video-source");
+        // Get DOM elements
+        const playAdBtn = document.getElementById('play-ad-btn');
+        const videoPlayer = document.getElementById('video-player');
+        const videoSource = document.getElementById('video-source');
+        const coinCount = document.getElementById('coin-count');
+        const skipAdBtn = document.getElementById('skip-ad-btn');
 
-            if (playButton) {
-                playButton.addEventListener("click", function () {
-                    const randomAd = ads[Math.floor(Math.random() * ads.length)];
-                    videoSource.src = randomAd;
-                    videoPlayer.load();
-                    videoPlayer.style.display = "block";
-                    videoPlayer.play().catch(error => console.error("Playback error:", error));
-                    this.style.display = "none";
-                });
+        let currentReward = 0;
+        let canPlayAd = true;
+        let skipTimer = null;
+        const COOLDOWN_TIME = 60;
+        const SKIP_DELAY = 5; // 5 seconds before skip button appears
+
+        // Function to play random ad
+        async function playRandomAd() {
+            if (!canPlayAd) {
+                alert('Please wait before watching another ad!');
+                return;
+            }
+
+            try {
+                const randomAd = adVideos[Math.floor(Math.random() * adVideos.length)];
+                currentReward = randomAd.reward;
+                
+                // Set up video source and load
+                videoSource.src = randomAd.url;
+                videoPlayer.load();
+                
+                // Show video player immediately
+                videoPlayer.style.display = 'block';
+                skipAdBtn.style.display = 'none'; // Hide skip button initially
+                
+                // Play video
+                try {
+                    await videoPlayer.play();
+                    console.log("Video started playing");
+                    
+                    // Start skip button timer
+                    let timeLeft = SKIP_DELAY;
+                    skipTimer = setInterval(() => {
+                        if (timeLeft > 0) {
+                            skipAdBtn.textContent = `Skip Ad in ${timeLeft}s`;
+                            timeLeft--;
+                        } else {
+                            clearInterval(skipTimer);
+                            skipAdBtn.textContent = 'Skip Ad';
+                            skipAdBtn.style.display = 'block';
+                        }
+                    }, 1000);
+                    
+                    // Disable the button and start cooldown
+                    playAdBtn.classList.add('disabled');
+                    canPlayAd = false;
+                    
+                    // Start cooldown timer
+                    startCooldownTimer();
+                } catch (playError) {
+                    console.error("Error playing video:", playError);
+                    alert("Please click the play button to start the video.");
+                }
+            } catch (error) {
+                console.error("Error loading video:", error);
+                alert("Error loading video. Please try again.");
+                resetAdState();
+            }
+        }
+
+        // Function to start cooldown timer
+        function startCooldownTimer() {
+            let timeLeft = COOLDOWN_TIME;
+            const cooldownInterval = setInterval(() => {
+                timeLeft--;
+                playAdBtn.textContent = `Wait ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(cooldownInterval);
+                    resetAdState();
+                }
+            }, 1000);
+        }
+
+        // Function to reset ad button state
+        function resetAdState() {
+            playAdBtn.classList.remove('disabled');
+            playAdBtn.innerHTML = `
+                <i data-lucide="play-circle" style="width: 24px; height: 24px;"></i>
+                Watch Ad
+            `;
+            canPlayAd = true;
+            lucide.createIcons();
+        }
+
+        // Function to handle video end or skip
+        function handleVideoEnd(wasSkipped = false) {
+            videoPlayer.style.display = 'none';
+            skipAdBtn.style.display = 'none';
+            if (skipTimer) {
+                clearInterval(skipTimer);
+            }
+            
+            // Only show reward and update coins if the video wasn't skipped
+            if (!wasSkipped) {
+                // Show reward animation immediately
+                const rewardElement = document.createElement('div');
+                rewardElement.className = 'reward-animation';
+                rewardElement.textContent = `+${currentReward} Coins!`;
+                document.body.appendChild(rewardElement);
+                
+                // Update Firestore coin count if user is logged in
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    const userRef = db.collection("users").doc(user.uid);
+                    userRef.get().then((doc) => {
+                        if (doc.exists) {
+                            const currentCoins = doc.data().coins || 0;
+                            const newCoins = currentCoins + currentReward;
+                            
+                            userRef.update({ coins: newCoins }).then(() => {
+                                // Update coin count in UI
+                                if (coinCount) {
+                                    coinCount.textContent = newCoins;
+                                }
+                            });
+                        }
+                    }).catch(error => {
+                        console.error("Error updating coins:", error);
+                    });
+                }
+                
+                // Remove reward animation after 2 seconds
+                setTimeout(() => {
+                    rewardElement.remove();
+                }, 2000);
+            }
+        }
+
+        // Function to handle skipping the ad
+        function skipAd() {
+            videoPlayer.pause();
+            handleVideoEnd(true); // Pass true to indicate the ad was skipped
+            resetAdState();
+        }
+
+        // Add event listeners
+        playAdBtn.addEventListener('click', playRandomAd);
+        videoPlayer.addEventListener('ended', () => handleVideoEnd(false));
+        skipAdBtn.addEventListener('click', skipAd);
+
+        // Handle video errors
+        videoPlayer.addEventListener('error', (e) => {
+            console.error("Video error:", e);
+            alert("Error playing video. Please try again.");
+            resetAdState();
+            if (skipTimer) {
+                clearInterval(skipTimer);
             }
         });
 
-        // Function to hide video and increase coins when the ad ends
-        function hideVideo() {
-            const videoPlayer = document.getElementById("video-player");
-            const playButton = document.getElementById("play-ad-btn");
-            const coinCountElement = document.getElementById("coin-count");
+        // Log video player events for debugging
+        ['loadstart', 'loadeddata', 'playing', 'pause', 'ended', 'error'].forEach(event => {
+            videoPlayer.addEventListener(event, () => {
+                console.log(`Video event: ${event}`);
+            });
+        });
 
-            videoPlayer.style.display = "none";
-            playButton.style.display = "block"; // Show button again
-
-            // Update Firestore coin count
-            const user = firebase.auth().currentUser;
-            if (user) {
-                const userRef = db.collection("users").doc(user.uid);
-                userRef.get().then((doc) => {
-                    if (doc.exists) {
-                        let currentCoins = doc.data().coins || 0;
-                        let newCoins = currentCoins + 1;
-
-                        userRef.update({ coins: newCoins }).then(() => {
-                            coinCountElement.innerText = newCoins; // Update UI
-                            console.log("Coins updated successfully!");
-                        });
-                    }
-                }).catch(error => console.error("Error updating coins:", error));
+        // Initialize Lucide icons when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
-        }
+        });
+    </script>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                lucide.createIcons();
+            })
+            .catch(error => console.error('Error loading header:', error));
     </script>
 </body>
 </html>
