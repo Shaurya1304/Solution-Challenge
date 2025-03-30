@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunities - Seekho</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f9ff;
+        }
+
+        #content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .hero-section {
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .section {
+            max-width: 1100px;
+            margin: 0 auto 32px;
+            padding: 0 16px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(to right, #f97316, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #f97316, #dc2626);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .section-title:hover::after {
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            color: white;
+            text-decoration: none;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Variant colors for different sections */
+        .hackathon-card {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        }
+
+        .internship-card {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+        }
+
+        .contest-card {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            margin-top: 32px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            #content {
+                padding: 0 16px;
+                margin: 16px auto;
+            }
+
+            .hero-section {
+                padding: 32px 16px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card img {
+                height: 160px;
+            }
+
+            .card-content {
+                padding: 16px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .card-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Content Section -->
+    <section id="content">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h2 class="hero-title">Unlock Your Future</h2>
+            <p class="hero-subtitle">Find the best competitions, hackathons, scholarships, and internships.</p>
+        </div>
+
+        <!-- Hackathons Section -->
+        <div class="section">
+            <h3 class="section-title">🔥 Hackathons</h3>
+            <div class="grid-container">
+                <a href="https://example.com/hackathon1" class="card hackathon-card">
+                    <img src="https://source.unsplash.com/300x200/?hackathon,technology" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">AI Hackathon 2025</h4>
+                        <p class="card-text">Compete with the best minds and win big prizes.</p>
+                    </div>
+                </a>
+                <a href="https://example.com/hackathon2" class="card hackathon-card">
+                    <img src="https://source.unsplash.com/300x200/?coding,teamwork" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">CodeSprint Global</h4>
+                        <p class="card-text">A global coding competition with cash rewards.</p>
+                    </div>
+                </a>
+                <a href="https://example.com/hackathon3" class="card hackathon-card">
+                    <img src="https://source.unsplash.com/300x200/?programming,innovation" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Startup Innovators</h4>
+                        <p class="card-text">Build startup ideas and get funding.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Internships Section -->
+        <div class="section">
+            <h3 class="section-title">🎯 Internships</h3>
+            <div class="grid-container">
+                <a href="https://example.com/internship1" class="card internship-card">
+                    <img src="https://source.unsplash.com/300x200/?office,internship" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Google Internship 2025</h4>
+                        <p class="card-text">Work with industry leaders and enhance your skills.</p>
+                    </div>
+                </a>
+                <a href="https://example.com/internship2" class="card internship-card">
+                    <img src="https://source.unsplash.com/300x200/?workplace,corporate" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Microsoft AI Intern</h4>
+                        <p class="card-text">Gain hands-on AI research experience.</p>
+                    </div>
+                </a>
+                <a href="https://example.com/internship3" class="card internship-card">
+                    <img src="https://source.unsplash.com/300x200/?startup,office" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Startup Developer Internship</h4>
+                        <p class="card-text">Intern with fast-growing startups and learn innovation.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Contests Section -->
+        <div class="section">
+            <h3 class="section-title">🏆 Contests</h3>
+            <div class="grid-container">
+                <a href="https://example.com/contest1" class="card contest-card">
+                    <img src="https://source.unsplash.com/300x200/?competition,prize" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Startup Pitch Contest</h4>
+                        <p class="card-text">Showcase your business idea and win funding.</p>
+                    </div>
+                </a>
+                <a href="https://example.com/contest2" class="card contest-card">
+                    <img src="https://source.unsplash.com/300x200/?writing,contest" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Creative Writing Challenge</h4>
+                        <p class="card-text">Show your creativity and win exciting prizes.</p>
+                    </div>
+                </a>
+                <a href="https://example.com/contest3" class="card contest-card">
+                    <img src="https://source.unsplash.com/300x200/?design,contest" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">UI/UX Design Contest</h4>
+                        <p class="card-text">Design the best UI and win recognition.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Seekho-Opportunities. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Load the common header
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                // Initialize Lucide icons
+                lucide.createIcons();
+            })
+            .catch(error => console.error('Error loading header:', error));
+    </script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertisements & Surveys</title>
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="auth.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f9ff;
+        }
+
+        #content {
+            margin: 20px;
+        }
+
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            scroll-behavior: smooth;
+            padding-bottom: 10px;
+        }
+        #video-player {
+            display: none;
+            width: 100%;
+            max-width: 640px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .ad-button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 16px;
+            position: relative;
+        }
+        #play-ad-btn:hover {
+            background-color: #c53030;
+            transform: scale(1.05);
+            transition: all 0.3s ease-in-out;
+        }
+        .tooltip {
+            position: absolute;
+            top: -30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
+        #play-ad-btn:hover + .tooltip {
+            display: block;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a237e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .banner-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .banner-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .banner-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .banner-card a {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .survey-card {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .survey-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .survey-card button {
+            background: white;
+            color: #1a237e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .survey-card button:hover {
+            background: #f0f0f0;
+        }
+
+        .reward-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 215, 0, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed !important;
+        }
+
+        .skip-ad-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+            transition: background-color 0.3s;
+        }
+
+        .skip-ad-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Content Section -->
+    <section id="content">
+        <!-- Sponsored Ads Section -->
+        <div class="card">
+            <h2 class="section-title">Sponsored Ads</h2>
+            <div class="ad-button-container">
+                <button id="play-ad-btn" style="background: #dc2626; color: white; padding: 12px 24px; border-radius: 25px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="play-circle" style="width: 24px; height: 24px;"></i>
+                    Watch Ad
+                </button>
+                <div class="tooltip">Watch and earn coins!</div>
+            </div>
+            <div class="video-container">
+                <video id="video-player" controls playsinline>
+                    <source id="video-source" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <button id="skip-ad-btn" class="skip-ad-btn">Skip Ad in 5s</button>
+            </div>
+        </div>
+
+        <!-- Sponsored Banners Section -->
+        <div class="card">
+            <h2 class="section-title">Sponsored Banners</h2>
+            <div class="grid-container">
+                <!-- Banner 1 -->
+                <div class="banner-card">
+                    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" alt="Google Ad 1">
+                    <a href="https://www.google.com" target="_blank">Visit Google</a>
+                </div>
+
+                <!-- Banner 2 -->
+                <div class="banner-card">
+                    <img src="https://www.gstatic.com/webp/gallery/2.jpg" alt="Google Ad 2">
+                    <a href="https://www.google.com" target="_blank">Visit Google</a>
+                </div>
+
+                <!-- Banner 3 -->
+                <div class="banner-card">
+                    <img src="https://www.gstatic.com/webp/gallery/4.jpg" alt="Google Ad 3">
+                    <a href="https://www.google.com" target="_blank">Visit Google</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Surveys Section -->
+        <div class="card">
+            <h2 class="section-title">Participate in Surveys</h2>
+            <div class="grid-container">
+                <!-- Survey Card 1 -->
+                <div class="survey-card">
+                    <h3 style="font-size: 20px; margin-bottom: 10px;">Company A Survey</h3>
+                    <p>Help us improve our services.</p>
+                    <button>Take Survey</button>
+                </div>
+
+                <!-- Survey Card 2 -->
+                <div class="survey-card" style="background: linear-gradient(135deg, #c2185b, #e91e63);">
+                    <h3 style="font-size: 20px; margin-bottom: 10px;">Company B Feedback</h3>
+                    <p>Your opinion matters to us!</p>
+                    <button style="color: #c2185b;">Take Survey</button>
+                </div>
+
+                <!-- Survey Card 3 -->
+                <div class="survey-card" style="background: linear-gradient(135deg, #00695c, #009688);">
+                    <h3 style="font-size: 20px; margin-bottom: 10px;">Company C Market Research</h3>
+                    <p>Participate and earn rewards.</p>
+                    <button style="color: #00695c;">Take Survey</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Firebase configuration (replace with your config)
+        const firebaseConfig = {
+            // Your Firebase config here
+            apiKey: "AIzaSyBjhJTxvhBZXCnYqkDH6AFOdRZ3ua_e-Vw",
+            authDomain: "seekho-e5c4b.firebaseapp.com",
+            projectId: "seekho-e5c4b",
+            storageBucket: "seekho-e5c4b.appspot.com",
+            messagingSenderId: "1031058737085",
+            appId: "1:1031058737085:web:4b40c44ed89f90ce83c6aa",
+            measurementId: "G-YWBP0BWKLR"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // Array of sample ad videos
+        const adVideos = [
+            {
+                url: 'https://www.w3schools.com/html/mov_bbb.mp4', // Test video that's known to work
+                reward: 5
+            },
+            {
+                url: 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4', // Another test video
+                reward: 10
+            }
+        ];
+
+        // Get DOM elements
+        const playAdBtn = document.getElementById('play-ad-btn');
+        const videoPlayer = document.getElementById('video-player');
+        const videoSource = document.getElementById('video-source');
+        const coinCount = document.getElementById('coin-count');
+        const skipAdBtn = document.getElementById('skip-ad-btn');
+
+        let currentReward = 0;
+        let canPlayAd = true;
+        let skipTimer = null;
+        const COOLDOWN_TIME = 60;
+        const SKIP_DELAY = 5; // 5 seconds before skip button appears
+
+        // Function to play random ad
+        async function playRandomAd() {
+            if (!canPlayAd) {
+                alert('Please wait before watching another ad!');
+                return;
+            }
+
+            try {
+                const randomAd = adVideos[Math.floor(Math.random() * adVideos.length)];
+                currentReward = randomAd.reward;
+                
+                // Set up video source and load
+                videoSource.src = randomAd.url;
+                videoPlayer.load();
+                
+                // Show video player immediately
+                videoPlayer.style.display = 'block';
+                skipAdBtn.style.display = 'none'; // Hide skip button initially
+                
+                // Play video
+                try {
+                    await videoPlayer.play();
+                    console.log("Video started playing");
+                    
+                    // Start skip button timer
+                    let timeLeft = SKIP_DELAY;
+                    skipTimer = setInterval(() => {
+                        if (timeLeft > 0) {
+                            skipAdBtn.textContent = `Skip Ad in ${timeLeft}s`;
+                            timeLeft--;
+                        } else {
+                            clearInterval(skipTimer);
+                            skipAdBtn.textContent = 'Skip Ad';
+                            skipAdBtn.style.display = 'block';
+                        }
+                    }, 1000);
+                    
+                    // Disable the button and start cooldown
+                    playAdBtn.classList.add('disabled');
+                    canPlayAd = false;
+                    
+                    // Start cooldown timer
+                    startCooldownTimer();
+                } catch (playError) {
+                    console.error("Error playing video:", playError);
+                    alert("Please click the play button to start the video.");
+                }
+            } catch (error) {
+                console.error("Error loading video:", error);
+                alert("Error loading video. Please try again.");
+                resetAdState();
+            }
+        }
+
+        // Function to start cooldown timer
+        function startCooldownTimer() {
+            let timeLeft = COOLDOWN_TIME;
+            const cooldownInterval = setInterval(() => {
+                timeLeft--;
+                playAdBtn.textContent = `Wait ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(cooldownInterval);
+                    resetAdState();
+                }
+            }, 1000);
+        }
+
+        // Function to reset ad button state
+        function resetAdState() {
+            playAdBtn.classList.remove('disabled');
+            playAdBtn.innerHTML = `
+                <i data-lucide="play-circle" style="width: 24px; height: 24px;"></i>
+                Watch Ad
+            `;
+            canPlayAd = true;
+            lucide.createIcons();
+        }
+
+        // Function to handle video end or skip
+        function handleVideoEnd(wasSkipped = false) {
+            videoPlayer.style.display = 'none';
+            skipAdBtn.style.display = 'none';
+            if (skipTimer) {
+                clearInterval(skipTimer);
+            }
+            
+            // Only show reward and update coins if the video wasn't skipped
+            if (!wasSkipped) {
+                // Show reward animation immediately
+                const rewardElement = document.createElement('div');
+                rewardElement.className = 'reward-animation';
+                rewardElement.textContent = `+${currentReward} Coins!`;
+                document.body.appendChild(rewardElement);
+                
+                // Update Firestore coin count if user is logged in
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    const userRef = db.collection("users").doc(user.uid);
+                    userRef.get().then((doc) => {
+                        if (doc.exists) {
+                            const currentCoins = doc.data().coins || 0;
+                            const newCoins = currentCoins + currentReward;
+                            
+                            userRef.update({ coins: newCoins }).then(() => {
+                                // Update coin count in UI
+                                if (coinCount) {
+                                    coinCount.textContent = newCoins;
+                                }
+                            });
+                        }
+                    }).catch(error => {
+                        console.error("Error updating coins:", error);
+                    });
+                }
+                
+                // Remove reward animation after 2 seconds
+                setTimeout(() => {
+                    rewardElement.remove();
+                }, 2000);
+            }
+        }
+
+        // Function to handle skipping the ad
+        function skipAd() {
+            videoPlayer.pause();
+            handleVideoEnd(true); // Pass true to indicate the ad was skipped
+            resetAdState();
+        }
+
+        // Add event listeners
+        playAdBtn.addEventListener('click', playRandomAd);
+        videoPlayer.addEventListener('ended', () => handleVideoEnd(false));
+        skipAdBtn.addEventListener('click', skipAd);
+
+        // Handle video errors
+        videoPlayer.addEventListener('error', (e) => {
+            console.error("Video error:", e);
+            alert("Error playing video. Please try again.");
+            resetAdState();
+            if (skipTimer) {
+                clearInterval(skipTimer);
+            }
+        });
+
+        // Log video player events for debugging
+        ['loadstart', 'loadeddata', 'playing', 'pause', 'ended', 'error'].forEach(event => {
+            videoPlayer.addEventListener(event, () => {
+                console.log(`Video event: ${event}`);
+            });
+        });
+
+        // Initialize Lucide icons when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                lucide.createIcons();
+            })
+            .catch(error => console.error('Error loading header:', error));
+    </script>
+</body>
+</html>
