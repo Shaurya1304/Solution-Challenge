@@ -60,7 +60,7 @@
                         <i data-lucide="settings" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
                         Settings
                     </a>
-                    <a href="#" style="display: block; padding: 12px 16px; color: #dc2626; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                    <a href="#" id="logout-btn" style="display: block; padding: 12px 16px; color: #dc2626; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
                         <i data-lucide="log-out" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
                         Logout
                     </a>
@@ -71,24 +71,8 @@
 </header>
 
 <script>
-    // Function to handle navigation
+    // Header-specific JavaScript
     document.addEventListener('DOMContentLoaded', function() {
-        // Get all navigation links
-        const navLinks = document.querySelectorAll('a[href]');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (!this.closest('.dropdown-content')) {  // Don't prevent default for dropdown menu items
-                    e.preventDefault();
-                    const href = this.getAttribute('href');
-                    if (href !== '#') {
-                        history.pushState({}, '', href);
-                        loadPageContent(href);
-                    }
-                }
-            });
-        });
-
         // Profile dropdown functionality
         const profileButton = document.querySelector('.profile-dropdown button');
         const dropdownContent = document.querySelector('.dropdown-content');
@@ -114,37 +98,18 @@
                 }
             }
         });
-    });
 
-    // Function to load page content
-    function loadPageContent(page) {
-        fetch(page)
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const content = doc.querySelector('#content');
-                if (content) {
-                    document.querySelector('#content').innerHTML = content.innerHTML;
-                    document.title = doc.title;
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
-                    }
-                } else {
-                    console.error('No #content element found in the loaded page');
+        // Logout functionality
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.logoutUser === 'function') {
+                    window.logoutUser();
                 }
-            })
-            .catch(error => console.error('Error loading page:', error));
-    }
-
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', function() {
-        const currentPage = window.location.pathname.split('/').pop() || 'homepage.html';
-        loadPageContent(currentPage);
+            });
+        }
     });
+</script>
 
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-</script> 
+<script type="module" src="auth.js"></script>
