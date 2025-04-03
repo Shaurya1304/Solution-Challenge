@@ -193,6 +193,16 @@
             width: 100%;
             max-width: 640px;
             margin: 20px auto;
+            display: none; /* Hide by default */
+        }
+        
+        #custom-video-player {
+            width: 100%;
+            max-width: 640px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -230,13 +240,16 @@
             <div style="display: flex; align-items: center; gap: 20px;">
                 <!-- Search Bar -->
                 <div style="position: relative;">
-                    <input type="text" id="yt-search" placeholder="Search YouTube videos..." 
+                    <input type="text" id="yt-search" placeholder="Search courses..." 
                         style="padding: 8px 16px 8px 40px; border-radius: 20px; border: none; background: rgba(255, 255, 255, 0.15); color: white; width: 250px; transition: all 0.3s;"
                         onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'"
                         onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'"
-                        onfocus="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'; this.style.width='300px'"
-                        onblur="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'; this.style.width='250px'">
+                        onfocus="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'; this.style.width='300px'; document.getElementById('search-results').style.display='block';"
+                        onblur="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'; this.style.width='250px'; setTimeout(() => {document.getElementById('search-results').style.display='none';}, 200);"
+                        oninput="filterCourses(this.value)"
+                        onkeydown="if(event.key === 'Enter') { showFloatingSearchWindow(this.value); return false; }">
                     <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: rgba(255, 255, 255, 0.8);"></i>
+                    <div id="search-results" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto; z-index: 1000; margin-top: 8px;"></div>
                 </div>
 
                 <!-- Coin Display -->
@@ -291,18 +304,6 @@
                 dropdownContent.style.display = 'none';
             });
 
-            // YouTube search functionality
-            const searchInput = document.getElementById('yt-search');
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const query = this.value.trim();
-                    if (query) {
-                        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-                        window.open(searchUrl, '_blank');
-                    }
-                }
-            });
-
             // Logout functionality
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) {
@@ -328,12 +329,25 @@
                 </button>
                 <div class="tooltip">Watch and earn coins!</div>
             </div>
-            <div class="video-container">
+            <div class="video-container" style="display: none;">
                 <video id="video-player" controls playsinline>
                     <source id="video-source" src="" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 <button id="skip-ad-btn" class="skip-ad-btn">Skip Ad in 5s</button>
+            </div>
+            
+            <!-- Fallback static video display -->
+            <div id="fallback-video-container" style="display: none; margin: 20px auto; max-width: 640px; text-align: center;">
+                <h3 id="fallback-video-title" style="margin-bottom: 10px; color: #1a237e;"></h3>
+                <div id="fallback-message" style="padding: 20px; background-color: #f0f9ff; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="font-weight: bold; font-size: 18px; color: #1a237e; margin-bottom: 10px;">Quick Reward Opportunity!</p>
+                    <p style="color: #333;">Learn about this topic and earn 10 coins instantly!</p>
+                </div>
+                <button id="claim-coins-btn" style="background: #4caf50; color: white; padding: 12px 24px; border-radius: 25px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                    <i data-lucide="coins" style="width: 24px; height: 24px;"></i>
+                    Claim 10 Coins
+                </button>
             </div>
         </div>
 
@@ -389,17 +403,53 @@
         </div>
     </section>
 
+    <div id="floating-search-window" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 1000px; height: 80%; max-height: 800px; background: white; border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 2000; overflow: hidden;">
+        <div style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div id="search-window-header" style="background: linear-gradient(135deg, #1a237e, #0d47a1); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="search-window-title" style="margin: 0; font-size: 20px;">Search Results</h2>
+                <button id="close-search-window" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;">&times;</button>
+            </div>
+            
+            <!-- Content -->
+            <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+                <!-- Tabs -->
+                <div style="display: flex; border-bottom: 1px solid #ddd;">
+                    <div id="courses-tab-btn" class="search-tab active" style="padding: 12px 20px; cursor: pointer; font-weight: bold;">Courses</div>
+                    <div id="videos-tab-btn" class="search-tab" style="padding: 12px 20px; cursor: pointer; font-weight: bold;">YouTube Videos</div>
+                </div>
+                
+                <!-- Filters -->
+                <div id="search-filters" style="padding: 10px 20px; display: flex; gap: 10px; border-bottom: 1px solid #eee;">
+                    <button class="filter-btn active" data-filter="all" style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 15px; background: #1a237e; color: white; cursor: pointer;">All</button>
+                    <button class="filter-btn" data-filter="free" style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 15px; background: white; cursor: pointer;">Free</button>
+                    <button class="filter-btn" data-filter="0-50" style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 15px; background: white; cursor: pointer;">0-50 Coins</button>
+                    <button class="filter-btn" data-filter="51-75" style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 15px; background: white; cursor: pointer;">51-75 Coins</button>
+                    <button class="filter-btn" data-filter="76+" style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 15px; background: white; cursor: pointer;">76+ Coins</button>
+                </div>
+                
+                <!-- Results Container -->
+                <div style="flex: 1; overflow-y: auto; padding: 20px;">
+                    <!-- Courses Tab Content -->
+                    <div id="courses-tab-content" class="tab-content" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
+                    
+                    <!-- Videos Tab Content -->
+                    <div id="videos-tab-content" class="tab-content" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Firebase configuration (replace with your config)
+        // Firebase configuration
         const firebaseConfig = {
-            // Your Firebase config here
-            apiKey: "AIzaSyBjhJTxvhBZXCnYqkDH6AFOdRZ3ua_e-Vw",
-            authDomain: "seekho-e5c4b.firebaseapp.com",
-            projectId: "seekho-e5c4b",
-            storageBucket: "seekho-e5c4b.appspot.com",
-            messagingSenderId: "1031058737085",
-            appId: "1:1031058737085:web:4b40c44ed89f90ce83c6aa",
-            measurementId: "G-YWBP0BWKLR"
+            apiKey: "AIzaSyBs4RuqwGbJpiiWt3ntLmI1yDaHSXWvrd0",
+            authDomain: "project-a0503.firebaseapp.com",
+            projectId: "project-a0503",
+            storageBucket: "project-a0503.firebasestorage.app",
+            messagingSenderId: "104700283996",
+            appId: "1:104700283996:web:4957e00f4e117ce3972a99",
+            measurementId: "G-82WXTZ39FR"
         };
 
         // Initialize Firebase
@@ -408,17 +458,723 @@
         }
         const db = firebase.firestore();
 
-        // Array of sample ad videos
+        // Array of sample ad videos - using direct video URLs from reliable sources
         const adVideos = [
             {
-                url: 'https://www.w3schools.com/html/mov_bbb.mp4', // Test video that's known to work
-                reward: 5
+                url: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4',
+                title: 'View From A Blue Moon',
+                description: 'Surfing documentary trailer',
+                reward: 10
             },
             {
-                url: 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4', // Another test video
+                url: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.mp4',
+                title: 'View From A Blue Moon (HD)',
+                description: 'Surfing documentary trailer in HD',
+                reward: 10
+            },
+            {
+                url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                title: 'Big Buck Bunny',
+                description: 'The adventures of a big rabbit',
+                reward: 10
+            },
+            {
+                url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                title: 'Elephants Dream',
+                description: 'A short animated film',
+                reward: 10
+            },
+            {
+                url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+                title: 'Tears of Steel',
+                description: 'Sci-fi short film',
                 reward: 10
             }
         ];
+
+        // Check user auth state when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    console.log("User is logged in:", user.email);
+                    updateUserCoinsDisplay(user);
+                } else {
+                    console.log("No user is logged in");
+                    const coinCount = document.getElementById('coin-count');
+                    if (coinCount) coinCount.textContent = '0';
+                    
+                    // Show login message
+                    showLoginMessage();
+                }
+            });
+        });
+        
+        // Function to show login message
+        function showLoginMessage() {
+            // Remove existing message if any
+            const existingMessage = document.querySelector('.login-message');
+            if (existingMessage) existingMessage.remove();
+            
+            const loginMessage = document.createElement('div');
+            loginMessage.className = 'login-message';
+            loginMessage.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #f8d7da;
+                color: #721c24;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 1000;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                text-align: center;
+                font-weight: bold;
+            `;
+            loginMessage.innerHTML = 'Please <a href="index.html" style="color: #721c24; text-decoration: underline;">log in</a> to earn and spend coins!';
+            document.body.appendChild(loginMessage);
+            
+            // Remove message after 10 seconds
+            setTimeout(() => {
+                if (loginMessage.parentNode) {
+                    loginMessage.parentNode.removeChild(loginMessage);
+                }
+            }, 10000);
+        }
+        
+        // Function to update user coins display
+        function updateUserCoinsDisplay(user) {
+            if (!user) return;
+            
+            const coinCount = document.getElementById('coin-count');
+            if (!coinCount) return;
+            
+            db.collection("users").doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const coins = doc.data().coins || 0;
+                        coinCount.textContent = coins;
+                    } else {
+                        console.log("No user document found");
+                        coinCount.textContent = '0';
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting user coins:", error);
+                });
+        }
+
+        // Initialize Lucide icons when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Direct event listener for play ad button
+            const adButton = document.getElementById('play-ad-btn');
+            console.log('Ad button found:', adButton !== null);
+            
+            if (adButton) {
+                adButton.addEventListener('click', function() {
+                    console.log('Ad button clicked directly');
+                    
+                    // Play a video instead of showing fallback
+                    playRandomAd();
+                });
+            }
+            
+            // Set up claim coins button
+            const claimCoinsBtn = document.getElementById('claim-coins-btn');
+            if (claimCoinsBtn) {
+                claimCoinsBtn.addEventListener('click', function() {
+                    console.log('Claim coins button clicked');
+                    awardCoinsForAd();
+                    document.getElementById('fallback-video-container').style.display = 'none';
+                });
+            }
+            
+            // Set up skip button
+            const skipBtn = document.getElementById('skip-ad-btn');
+            if (skipBtn) {
+                skipBtn.style.display = 'none';
+            }
+        });
+
+        // Function to show fallback coin claim
+        function showFallbackCoinClaim() {
+            // Check if user is logged in
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert("Please log in to earn coins!");
+                return;
+            }
+            
+            if (!canPlayAd) {
+                alert('Please wait before earning more coins!');
+                return;
+            }
+            
+            // Play a video instead of showing fallback
+            playRandomAd();
+        }
+
+        // Function to play a random ad
+        function playRandomAd() {
+            // Check if user is logged in
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert("Please log in to watch ads and earn coins!");
+                return;
+            }
+            
+            if (!canPlayAd) {
+                alert('Please wait before watching another ad!');
+                return;
+            }
+            
+            // Hide fallback container
+            const fallbackContainer = document.getElementById('fallback-video-container');
+            if (fallbackContainer) {
+                fallbackContainer.style.display = 'none';
+            }
+            
+            // Choose a random ad video
+            const randomAd = adVideos[Math.floor(Math.random() * adVideos.length)];
+            currentReward = randomAd.reward;
+            
+            // Set video source
+            videoSource.src = randomAd.url;
+            videoPlayer.load();
+            
+            // Show video container
+            const videoContainer = document.querySelector('.video-container');
+            if (videoContainer) {
+                videoContainer.style.display = 'block';
+            }
+            
+            // Show video player
+            videoPlayer.style.display = 'block';
+            
+            // Start playing
+            videoPlayer.play()
+                .then(() => {
+                    console.log('Video playing successfully');
+                    // Setup skip button
+                    setupSkipButton();
+                })
+                .catch(error => {
+                    console.error('Error playing video:', error);
+                    // Create a play button if autoplay fails
+                    const playButton = document.createElement('button');
+                    playButton.textContent = 'Click to Play';
+                    playButton.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(0, 0, 0, 0.7);
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    `;
+                    playButton.onclick = function() {
+                        videoPlayer.play();
+                        this.remove();
+                    };
+                    
+                    videoContainer.appendChild(playButton);
+                });
+            
+            // Set up video event listeners
+            setupVideoEventListeners();
+            
+            // Disable the watch ad button
+            const playAdBtn = document.getElementById('play-ad-btn');
+            if (playAdBtn) {
+                playAdBtn.classList.add('disabled');
+                canPlayAd = false;
+            }
+        }
+        
+        // Function to set up video event listeners
+        function setupVideoEventListeners() {
+            // Remove existing listeners to prevent duplicates
+            videoPlayer.removeEventListener('ended', videoEndedHandler);
+            
+            // Add ended event listener
+            videoPlayer.addEventListener('ended', videoEndedHandler);
+        }
+        
+        // Video ended handler
+        function videoEndedHandler() {
+            console.log('Video ended');
+            
+            // Award coins
+            awardCoinsForAd();
+            
+            // Hide video
+            videoPlayer.style.display = 'none';
+            const videoContainer = document.querySelector('.video-container');
+            if (videoContainer) {
+                videoContainer.style.display = 'none';
+            }
+            
+            // Start cooldown
+            startCooldownTimer();
+        }
+        
+        // Function to setup skip button
+        function setupSkipButton() {
+            let secondsLeft = SKIP_DELAY;
+            skipAdBtn.textContent = `Skip Ad in ${secondsLeft}s`;
+            skipAdBtn.style.display = 'block';
+            skipAdBtn.disabled = true;
+            
+            // Clear existing timer if any
+            if (skipTimer) clearInterval(skipTimer);
+            
+            // Start new timer
+            skipTimer = setInterval(() => {
+                secondsLeft--;
+                skipAdBtn.textContent = `Skip Ad in ${secondsLeft}s`;
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(skipTimer);
+                    skipAdBtn.textContent = 'Skip Ad';
+                    skipAdBtn.disabled = false;
+                    
+                    // Add skip functionality
+                    skipAdBtn.onclick = function() {
+                        // Award coins even if skipped (reduced amount could be implemented)
+                        awardCoinsForAd();
+                        videoPlayer.pause();
+                        videoPlayer.style.display = 'none';
+                        const videoContainer = document.querySelector('.video-container');
+                        if (videoContainer) {
+                            videoContainer.style.display = 'none';
+                        }
+                    };
+                }
+            }, 1000);
+        }
+
+        // Function to award coins for watching an ad
+        function awardCoinsForAd() {
+            // Show reward animation
+            const rewardElement = document.createElement('div');
+            rewardElement.className = 'reward-animation';
+            rewardElement.textContent = '+10 Coins!';
+            document.body.appendChild(rewardElement);
+            
+            // Update Firestore coin count if user is logged in
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const userRef = db.collection("users").doc(user.uid);
+                userRef.get().then((doc) => {
+                    if (doc.exists) {
+                        const currentCoins = doc.data().coins || 0;
+                        const newCoins = currentCoins + 10;
+                        
+                        userRef.update({ 
+                            coins: firebase.firestore.FieldValue.increment(10) 
+                        }).then(() => {
+                            // Update coin count in UI
+                            const coinCount = document.getElementById('coin-count');
+                            if (coinCount) {
+                                coinCount.textContent = newCoins;
+                            }
+                        }).catch(error => {
+                            console.error("Error updating coins:", error);
+                            alert("Error updating coins. Please try again.");
+                        });
+                    }
+                }).catch(error => {
+                    console.error("Error getting user data:", error);
+                    alert("Error getting user data. Please try again.");
+                });
+            }
+            
+            // Remove reward animation after 2 seconds
+            setTimeout(() => {
+                rewardElement.remove();
+            }, 2000);
+            
+            // Reset ad state
+            resetAdState();
+        }
+        
+        // Function to start cooldown timer
+        function startCooldownTimer() {
+            let timeLeft = COOLDOWN_TIME;
+            const cooldownInterval = setInterval(() => {
+                timeLeft--;
+                const playAdBtn = document.getElementById('play-ad-btn');
+                if (playAdBtn) {
+                    playAdBtn.textContent = `Wait ${timeLeft}s`;
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(cooldownInterval);
+                    resetAdState();
+                }
+            }, 1000);
+        }
+
+        // Function to reset ad button state
+        function resetAdState() {
+            const playAdBtn = document.getElementById('play-ad-btn');
+            if (playAdBtn) {
+                playAdBtn.classList.remove('disabled');
+                playAdBtn.innerHTML = `
+                    <i data-lucide="play-circle" style="width: 24px; height: 24px;"></i>
+                    Watch Ad
+                `;
+                canPlayAd = true;
+                lucide.createIcons();
+            }
+            
+            // Hide video container when resetting
+            const videoContainer = document.querySelector('.video-container');
+            if (videoContainer) {
+                videoContainer.style.display = 'none';
+            }
+            
+            // Hide fallback container when resetting
+            const fallbackContainer = document.getElementById('fallback-video-container');
+            if (fallbackContainer) {
+                fallbackContainer.style.display = 'none';
+            }
+        }
+
+        // Function to filter courses based on search term
+        function filterCourses(searchTerm) {
+            const searchResults = document.getElementById('search-results');
+            searchResults.innerHTML = '';
+            
+            if (!searchTerm) {
+                // If empty, show some popular courses
+                const popularCourses = availableCourses.slice(0, 5);
+                renderCourseResults(popularCourses);
+                return;
+            }
+            
+            searchTerm = searchTerm.toLowerCase();
+            const filteredCourses = availableCourses.filter(course => 
+                course.title.toLowerCase().includes(searchTerm) || 
+                course.instructor.toLowerCase().includes(searchTerm)
+            );
+            
+            renderCourseResults(filteredCourses);
+        }
+        
+        // Function to render course results
+        function renderCourseResults(courses) {
+            const searchResults = document.getElementById('search-results');
+            
+            if (courses.length === 0) {
+                searchResults.innerHTML = '<div style="padding: 16px; text-align: center; color: #666;">No courses found</div>';
+                return;
+            }
+            
+            courses.forEach(course => {
+                const courseElement = document.createElement('div');
+                courseElement.className = 'course-item';
+                courseElement.style.cssText = 'display: flex; padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s;';
+                courseElement.onmouseover = function() { this.style.backgroundColor = '#f5f5f5'; };
+                courseElement.onmouseout = function() { this.style.backgroundColor = 'transparent'; };
+                
+                // Course thumbnail
+                const thumbnail = document.createElement('img');
+                thumbnail.src = course.thumbnail;
+                thumbnail.alt = course.title;
+                thumbnail.style.cssText = 'width: 80px; height: 45px; object-fit: cover; border-radius: 4px;';
+                
+                // Course details
+                const details = document.createElement('div');
+                details.style.cssText = 'margin-left: 12px; flex: 1;';
+                
+                const title = document.createElement('div');
+                title.textContent = course.title;
+                title.style.cssText = 'font-weight: bold; color: #333; margin-bottom: 4px;';
+                
+                const instructor = document.createElement('div');
+                instructor.textContent = course.instructor;
+                instructor.style.cssText = 'font-size: 12px; color: #666;';
+                
+                // Cost badge
+                const costBadge = document.createElement('div');
+                costBadge.style.cssText = `
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-left: 8px;
+                    ${course.cost === 0 ? 
+                        'background-color: #4caf50; color: white;' : 
+                        'background-color: #ffc107; color: #333;'}
+                `;
+                costBadge.textContent = course.cost === 0 ? 'FREE' : `${course.cost} coins`;
+                
+                // Add elements to the DOM
+                details.appendChild(title);
+                details.appendChild(instructor);
+                
+                courseElement.appendChild(thumbnail);
+                courseElement.appendChild(details);
+                courseElement.appendChild(costBadge);
+                
+                // Add click event to open the course
+                courseElement.addEventListener('click', function() {
+                    showCourseModal(course);
+                });
+                
+                searchResults.appendChild(courseElement);
+            });
+        }
+
+        // Function to show course modal
+        function showCourseModal(course) {
+            // Create modal elements
+            const modalOverlay = document.createElement('div');
+            modalOverlay.id = 'course-modal-overlay';
+            modalOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1001;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background-color: white;
+                border-radius: 8px;
+                width: 90%;
+                max-width: 700px;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                position: relative;
+            `;
+
+            // Close button
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '&times;';
+            closeButton.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #666;
+                z-index: 1002;
+            `;
+            closeButton.onclick = function() {
+                document.body.removeChild(modalOverlay);
+            };
+
+            // Course header with image banner
+            const courseHeader = document.createElement('div');
+            courseHeader.style.cssText = `
+                width: 100%;
+                height: 200px;
+                background-image: url(${course.thumbnail});
+                background-size: cover;
+                background-position: center;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                position: relative;
+            `;
+
+            // Overlay on image for better text visibility
+            const headerOverlay = document.createElement('div');
+            headerOverlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 20px;
+            `;
+
+            const courseTitle = document.createElement('h2');
+            courseTitle.textContent = course.title;
+            courseTitle.style.cssText = `
+                color: white;
+                margin: 0 0 10px 0;
+                font-size: 24px;
+                font-weight: bold;
+            `;
+
+            const courseInstructor = document.createElement('p');
+            courseInstructor.textContent = `Instructor: ${course.instructor}`;
+            courseInstructor.style.cssText = `
+                color: rgba(255, 255, 255, 0.9);
+                margin: 0;
+                font-size: 16px;
+            `;
+
+            headerOverlay.appendChild(courseTitle);
+            headerOverlay.appendChild(courseInstructor);
+            courseHeader.appendChild(headerOverlay);
+
+            // Course details content
+            const courseDetails = document.createElement('div');
+            courseDetails.style.cssText = `
+                padding: 20px;
+            `;
+
+            const courseDescription = document.createElement('div');
+            courseDescription.style.cssText = `
+                margin-bottom: 20px;
+                line-height: 1.6;
+                color: #333;
+            `;
+            courseDescription.innerHTML = `<h3 style="margin-top: 0;">Course Description</h3><p>${course.description}</p>`;
+
+            // Cost and action button
+            const actionArea = document.createElement('div');
+            actionArea.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            `;
+
+            const costDisplay = document.createElement('div');
+            costDisplay.style.cssText = `
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+            `;
+            costDisplay.innerHTML = course.cost === 0 ? 
+                '<span style="color: #4caf50;">FREE</span>' : 
+                `<span style="color: #f39c12;">${course.cost} Coins</span>`;
+
+            const accessButton = document.createElement('button');
+            accessButton.style.cssText = `
+                padding: 12px 24px;
+                background-color: ${course.cost === 0 ? '#4caf50' : '#f39c12'};
+                color: white;
+                border: none;
+                border-radius: 25px;
+                font-weight: bold;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+            `;
+            accessButton.textContent = course.cost === 0 ? 'Access Now' : 'Purchase Course';
+            accessButton.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
+            accessButton.onmouseout = function() { this.style.transform = 'scale(1)'; };
+
+            // Handle access button click
+            accessButton.addEventListener('click', function() {
+                if (course.cost > 0) {
+                    // For paid courses, check if user has enough coins
+                    const user = firebase.auth().currentUser;
+                    if (user) {
+                        const userRef = db.collection("users").doc(user.uid);
+                        userRef.get().then((doc) => {
+                            if (doc.exists) {
+                                const userCoins = doc.data().coins || 0;
+                                if (userCoins >= course.cost) {
+                                    if (confirm(`Do you want to spend ${course.cost} coins to access this course?`)) {
+                                        // Deduct coins
+                                        userRef.update({ 
+                                            coins: firebase.firestore.FieldValue.increment(-course.cost) 
+                                        }).then(() => {
+                                            // Update UI
+                                            const coinCount = document.getElementById('coin-count');
+                                            if (coinCount) {
+                                                coinCount.textContent = userCoins - course.cost;
+                                            }
+                                            
+                                            // Change modal content to show success
+                                            courseDetails.innerHTML = `
+                                                <div style="text-align: center; padding: 40px 20px;">
+                                                    <i data-lucide="check-circle" style="width: 80px; height: 80px; color: #4caf50;"></i>
+                                                    <h2 style="margin-top: 20px; color: #333;">Purchase Successful!</h2>
+                                                    <p style="margin-bottom: 30px; color: #666;">You now have access to this course.</p>
+                                                    <button id="open-course-btn" style="padding: 12px 24px; background-color: #2563eb; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer;">Open Course</button>
+                                                </div>
+                                            `;
+                                            
+                                            // Recreate Lucide icons
+                                            lucide.createIcons();
+                                            
+                                            // Add event listener to the open course button
+                                            document.getElementById('open-course-btn').addEventListener('click', function() {
+                                                window.open(course.url, '_blank');
+                                                document.body.removeChild(modalOverlay);
+                                            });
+                                        });
+                                    }
+                                } else {
+                                    alert(`You need ${course.cost - userCoins} more coins to access this course. Watch ads to earn more coins!`);
+                                }
+                            }
+                        });
+                    } else {
+                        alert("Please log in to access this course!");
+                    }
+                } else {
+                    // For free courses, open directly
+                    window.open(course.url, '_blank');
+                    document.body.removeChild(modalOverlay);
+                }
+            });
+
+            actionArea.appendChild(costDisplay);
+            actionArea.appendChild(accessButton);
+
+            // Assemble all elements
+            courseDetails.appendChild(courseDescription);
+            courseDetails.appendChild(actionArea);
+
+            modalContent.appendChild(closeButton);
+            modalContent.appendChild(courseHeader);
+            modalContent.appendChild(courseDetails);
+            modalOverlay.appendChild(modalContent);
+
+            // Close modal when clicking outside
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    document.body.removeChild(modalOverlay);
+                }
+            });
+
+            // Add modal to the DOM
+            document.body.appendChild(modalOverlay);
+            
+            // Initialize Lucide icons in the modal
+            lucide.createIcons({
+                attrs: {
+                    class: ["my-custom-class"]
+                }
+            });
+        }
+
+        // Initialize search results with popular courses when focused
+        document.getElementById('yt-search').addEventListener('focus', function() {
+            filterCourses('');
+        });
 
         // Get DOM elements
         const playAdBtn = document.getElementById('play-ad-btn');
@@ -433,162 +1189,70 @@
         const COOLDOWN_TIME = 60;
         const SKIP_DELAY = 5; // 5 seconds before skip button appears
 
-        // Function to play random ad
-        async function playRandomAd() {
-            if (!canPlayAd) {
-                alert('Please wait before watching another ad!');
-                return;
-            }
+        // Debug current state of play ad button
+        console.log('Play Ad Button:', playAdBtn);
 
-            try {
-                const randomAd = adVideos[Math.floor(Math.random() * adVideos.length)];
-                currentReward = randomAd.reward;
-                
-                // Set up video source and load
-                videoSource.src = randomAd.url;
-                videoPlayer.load();
-                
-                // Show video player immediately
-                videoPlayer.style.display = 'block';
-                skipAdBtn.style.display = 'none'; // Hide skip button initially
-                
-                // Play video
-                try {
-                    await videoPlayer.play();
-                    console.log("Video started playing");
-                    
-                    // Start skip button timer
-                    let timeLeft = SKIP_DELAY;
-                    skipTimer = setInterval(() => {
-                        if (timeLeft > 0) {
-                            skipAdBtn.textContent = `Skip Ad in ${timeLeft}s`;
-                            timeLeft--;
-                        } else {
-                            clearInterval(skipTimer);
-                            skipAdBtn.textContent = 'Skip Ad';
-                            skipAdBtn.style.display = 'block';
-                        }
-                    }, 1000);
-                    
-                    // Disable the button and start cooldown
-                    playAdBtn.classList.add('disabled');
-                    canPlayAd = false;
-                    
-                    // Start cooldown timer
-                    startCooldownTimer();
-                } catch (playError) {
-                    console.error("Error playing video:", playError);
-                    alert("Please click the play button to start the video.");
-                }
-            } catch (error) {
-                console.error("Error loading video:", error);
-                alert("Error loading video. Please try again.");
-                resetAdState();
-            }
-        }
-
-        // Function to start cooldown timer
-        function startCooldownTimer() {
-            let timeLeft = COOLDOWN_TIME;
-            const cooldownInterval = setInterval(() => {
-                timeLeft--;
-                playAdBtn.textContent = `Wait ${timeLeft}s`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(cooldownInterval);
-                    resetAdState();
-                }
-            }, 1000);
-        }
-
-        // Function to reset ad button state
-        function resetAdState() {
-            playAdBtn.classList.remove('disabled');
-            playAdBtn.innerHTML = `
-                <i data-lucide="play-circle" style="width: 24px; height: 24px;"></i>
-                Watch Ad
-            `;
-            canPlayAd = true;
-            lucide.createIcons();
-        }
-
-        // Function to handle video end or skip
-        function handleVideoEnd(wasSkipped = false) {
-            videoPlayer.style.display = 'none';
-            skipAdBtn.style.display = 'none';
-            if (skipTimer) {
-                clearInterval(skipTimer);
-            }
-            
-            // Only show reward and update coins if the video wasn't skipped
-            if (!wasSkipped) {
-                // Show reward animation immediately
-                const rewardElement = document.createElement('div');
-                rewardElement.className = 'reward-animation';
-                rewardElement.textContent = `+${currentReward} Coins!`;
-                document.body.appendChild(rewardElement);
-                
-                // Update Firestore coin count if user is logged in
-                const user = firebase.auth().currentUser;
-                if (user) {
-                    const userRef = db.collection("users").doc(user.uid);
-                    userRef.get().then((doc) => {
-                        if (doc.exists) {
-                            const currentCoins = doc.data().coins || 0;
-                            const newCoins = currentCoins + currentReward;
-                            
-                            userRef.update({ coins: newCoins }).then(() => {
-                                // Update coin count in UI
-                                if (coinCount) {
-                                    coinCount.textContent = newCoins;
-                                }
-                            });
-                        }
-                    }).catch(error => {
-                        console.error("Error updating coins:", error);
-                    });
-                }
-                
-                // Remove reward animation after 2 seconds
-                setTimeout(() => {
-                    rewardElement.remove();
-                }, 2000);
-            }
-        }
-
-        // Function to handle skipping the ad
-        function skipAd() {
-            videoPlayer.pause();
-            handleVideoEnd(true); // Pass true to indicate the ad was skipped
-            resetAdState();
-        }
-
-        // Add event listeners
-        playAdBtn.addEventListener('click', playRandomAd);
-        videoPlayer.addEventListener('ended', () => handleVideoEnd(false));
-        skipAdBtn.addEventListener('click', skipAd);
-
-        // Handle video errors
-        videoPlayer.addEventListener('error', (e) => {
-            console.error("Video error:", e);
-            alert("Error playing video. Please try again.");
-            resetAdState();
-            if (skipTimer) {
-                clearInterval(skipTimer);
-            }
-        });
-
-        // Log video player events for debugging
-        ['loadstart', 'loadeddata', 'playing', 'pause', 'ended', 'error'].forEach(event => {
-            videoPlayer.addEventListener(event, () => {
-                console.log(`Video event: ${event}`);
-            });
-        });
-
-        // Initialize Lucide icons when the page loads
+        // Ensure play ad button event listener is setup
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            // Check if user is logged in when page loads
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    console.log("User is logged in:", user.email);
+                    // Update coins display
+                    updateUserCoinsDisplay(user);
+                } else {
+                    console.log("No user is logged in");
+                    const coinCount = document.getElementById('coin-count');
+                    if (coinCount) coinCount.textContent = '0';
+                    
+                    // Show login message
+                    const loginMessage = document.createElement('div');
+                    loginMessage.className = 'login-message';
+                    loginMessage.style.cssText = `
+                        position: fixed;
+                        top: 80px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: #f8d7da;
+                        color: #721c24;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        z-index: 1000;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        text-align: center;
+                        font-weight: bold;
+                    `;
+                    loginMessage.innerHTML = 'Please <a href="index.html" style="color: #721c24; text-decoration: underline;">log in</a> to earn and spend coins!';
+                    document.body.appendChild(loginMessage);
+                    
+                    // Remove message after 10 seconds
+                    setTimeout(() => {
+                        if (loginMessage.parentNode) {
+                            loginMessage.parentNode.removeChild(loginMessage);
+                        }
+                    }, 10000);
+                }
+            });
+            
+            // Existing code...
+            const playAdBtnCheck = document.getElementById('play-ad-btn');
+            if (playAdBtnCheck) {
+                // Remove any existing listeners to avoid duplicates
+                playAdBtnCheck.removeEventListener('click', showFallbackCoinClaim);
+                
+                // Add click event listener with login check
+                playAdBtnCheck.addEventListener('click', function() {
+                    console.log('Watch Ad button clicked');
+                    
+                    // Check if user is logged in before playing ad
+                    const user = firebase.auth().currentUser;
+                    if (!user) {
+                        alert("Please log in to watch ads and earn coins!");
+                        return;
+                    }
+                    
+                    playRandomAd();
+                });
             }
         });
     </script>
