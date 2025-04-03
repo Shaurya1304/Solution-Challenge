@@ -871,6 +871,203 @@
             renderCourseResults(filteredCourses);
         }
         
+        // Define availableCourses array
+        const availableCourses = [
+            {
+                title: "Introduction to Python Programming",
+                instructor: "John Smith",
+                description: "Learn the basics of Python programming language. This course covers variables, data types, control structures, functions, and more.",
+                thumbnail: "https://www.gstatic.com/webp/gallery/1.jpg",
+                cost: 0,
+                url: "https://www.example.com/python-course"
+            },
+            {
+                title: "Advanced JavaScript",
+                instructor: "Jane Doe",
+                description: "Master advanced JavaScript concepts including closures, promises, async/await, and modern ES6+ features.",
+                thumbnail: "https://www.gstatic.com/webp/gallery/2.jpg",
+                cost: 50,
+                url: "https://www.example.com/javascript-course"
+            },
+            {
+                title: "Web Development with React",
+                instructor: "Michael Johnson",
+                description: "Build modern web applications using React. Learn about components, state management, routing, and connecting to APIs.",
+                thumbnail: "https://www.gstatic.com/webp/gallery/3.jpg",
+                cost: 75,
+                url: "https://www.example.com/react-course"
+            },
+            {
+                title: "Data Science Fundamentals",
+                instructor: "Sarah Williams",
+                description: "Introduction to data science concepts, tools and techniques. Learn about data analysis, visualization, and basic machine learning.",
+                thumbnail: "https://www.gstatic.com/webp/gallery/4.jpg",
+                cost: 100,
+                url: "https://www.example.com/data-science-course"
+            },
+            {
+                title: "Mobile App Development with Flutter",
+                instructor: "David Chen",
+                description: "Create cross-platform mobile applications for iOS and Android using Flutter and Dart programming language.",
+                thumbnail: "https://www.gstatic.com/webp/gallery/5.jpg",
+                cost: 80,
+                url: "https://www.example.com/flutter-course"
+            }
+        ];
+        
+        // Function to show floating search window
+        function showFloatingSearchWindow(searchQuery) {
+            const floatingWindow = document.getElementById('floating-search-window');
+            const searchWindowTitle = document.getElementById('search-window-title');
+            
+            // Set window title with search query
+            searchWindowTitle.textContent = `Search Results for "${searchQuery}"`;
+            
+            // Show the window
+            floatingWindow.style.display = 'block';
+            
+            // Filter courses for the search window
+            const filteredCourses = availableCourses.filter(course => 
+                course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                course.instructor.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            
+            // Display courses in the courses tab
+            const coursesTabContent = document.getElementById('courses-tab-content');
+            coursesTabContent.innerHTML = '';
+            
+            if (filteredCourses.length === 0) {
+                coursesTabContent.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">No courses found matching your search</div>';
+            } else {
+                filteredCourses.forEach(course => {
+                    const courseCard = document.createElement('div');
+                    courseCard.className = 'course-card';
+                    courseCard.setAttribute('data-cost', course.cost);
+                    courseCard.style.cssText = `
+                        background: white;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        transition: transform 0.3s;
+                        cursor: pointer;
+                    `;
+                    courseCard.onmouseover = function() { this.style.transform = 'translateY(-5px)'; };
+                    courseCard.onmouseout = function() { this.style.transform = 'translateY(0)'; };
+                    
+                    courseCard.innerHTML = `
+                        <img src="${course.thumbnail}" alt="${course.title}" style="width: 100%; height: 150px; object-fit: cover;">
+                        <div style="padding: 15px;">
+                            <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #333;">${course.title}</h3>
+                            <p style="margin: 0 0 12px 0; font-size: 14px; color: #666;">${course.instructor}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="
+                                    font-weight: bold;
+                                    color: ${course.cost === 0 ? '#4caf50' : '#f39c12'};
+                                ">${course.cost === 0 ? 'FREE' : `${course.cost} Coins`}</span>
+                                <button class="course-action-btn" style="
+                                    padding: 6px 12px;
+                                    background: ${course.cost === 0 ? '#4caf50' : '#f39c12'};
+                                    color: white;
+                                    border: none;
+                                    border-radius: 15px;
+                                    font-size: 12px;
+                                    font-weight: bold;
+                                ">${course.cost === 0 ? 'Access Now' : 'Purchase'}</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Make sure the entire card is clickable
+                    courseCard.addEventListener('click', function(e) {
+                        console.log('Search window course card clicked:', course.title);
+                        
+                        // Don't trigger if clicking on the action button (it has its own handler)
+                        if (e.target.classList.contains('course-action-btn')) {
+                            return;
+                        }
+                        
+                        showCourseModal(course);
+                    });
+                    
+                    // Get the action button and add its own click handler
+                    courseCard.querySelector('.course-action-btn').addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent card click event
+                        console.log('Course action button clicked:', course.title);
+                        showCourseModal(course);
+                    });
+                    
+                    coursesTabContent.appendChild(courseCard);
+                });
+            }
+            
+            // Setup close button
+            const closeSearchWindow = document.getElementById('close-search-window');
+            closeSearchWindow.addEventListener('click', function() {
+                floatingWindow.style.display = 'none';
+            });
+            
+            // Setup tabs
+            const coursesTabBtn = document.getElementById('courses-tab-btn');
+            const videosTabBtn = document.getElementById('videos-tab-btn');
+            const videosTabContent = document.getElementById('videos-tab-content');
+            
+            coursesTabBtn.addEventListener('click', function() {
+                coursesTabBtn.classList.add('active');
+                videosTabBtn.classList.remove('active');
+                coursesTabContent.style.display = 'grid';
+                videosTabContent.style.display = 'none';
+            });
+            
+            videosTabBtn.addEventListener('click', function() {
+                videosTabBtn.classList.add('active');
+                coursesTabBtn.classList.remove('active');
+                videosTabContent.style.display = 'block';
+                coursesTabContent.style.display = 'none';
+                
+                // Load YouTube videos (placeholder)
+                videosTabContent.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">YouTube video results coming soon</div>';
+            });
+            
+            // Setup filters
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get filter value
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Filter courses
+                    const courseCards = document.querySelectorAll('.course-card');
+                    courseCards.forEach(card => {
+                        const cost = parseInt(card.getAttribute('data-cost'));
+                        
+                        switch(filter) {
+                            case 'all':
+                                card.style.display = 'block';
+                                break;
+                            case 'free':
+                                card.style.display = cost === 0 ? 'block' : 'none';
+                                break;
+                            case '0-50':
+                                card.style.display = cost >= 0 && cost <= 50 ? 'block' : 'none';
+                                break;
+                            case '51-75':
+                                card.style.display = cost >= 51 && cost <= 75 ? 'block' : 'none';
+                                break;
+                            case '76+':
+                                card.style.display = cost >= 76 ? 'block' : 'none';
+                                break;
+                        }
+                    });
+                });
+            });
+        }
+        
         // Function to render course results
         function renderCourseResults(courses) {
             const searchResults = document.getElementById('search-results');
@@ -879,6 +1076,8 @@
                 searchResults.innerHTML = '<div style="padding: 16px; text-align: center; color: #666;">No courses found</div>';
                 return;
             }
+            
+            searchResults.innerHTML = ''; // Clear previous results
             
             courses.forEach(course => {
                 const courseElement = document.createElement('div');
@@ -928,7 +1127,10 @@
                 courseElement.appendChild(costBadge);
                 
                 // Add click event to open the course
-                courseElement.addEventListener('click', function() {
+                courseElement.addEventListener('click', function(e) {
+                    console.log('Course element clicked:', course.title);
+                    e.preventDefault();
+                    e.stopPropagation();
                     showCourseModal(course);
                 });
                 
@@ -938,237 +1140,276 @@
 
         // Function to show course modal
         function showCourseModal(course) {
-            // Create modal elements
-            const modalOverlay = document.createElement('div');
-            modalOverlay.id = 'course-modal-overlay';
-            modalOverlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1001;
-            `;
-
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background-color: white;
-                border-radius: 8px;
-                width: 90%;
-                max-width: 700px;
-                max-height: 90vh;
-                overflow-y: auto;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                position: relative;
-            `;
-
-            // Close button
-            const closeButton = document.createElement('button');
-            closeButton.innerHTML = '&times;';
-            closeButton.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 15px;
-                background: none;
-                border: none;
-                font-size: 28px;
-                cursor: pointer;
-                color: #666;
-                z-index: 1002;
-            `;
-            closeButton.onclick = function() {
-                document.body.removeChild(modalOverlay);
-            };
-
-            // Course header with image banner
-            const courseHeader = document.createElement('div');
-            courseHeader.style.cssText = `
-                width: 100%;
-                height: 200px;
-                background-image: url(${course.thumbnail});
-                background-size: cover;
-                background-position: center;
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-                position: relative;
-            `;
-
-            // Overlay on image for better text visibility
-            const headerOverlay = document.createElement('div');
-            headerOverlay.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.7));
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                padding: 20px;
-            `;
-
-            const courseTitle = document.createElement('h2');
-            courseTitle.textContent = course.title;
-            courseTitle.style.cssText = `
-                color: white;
-                margin: 0 0 10px 0;
-                font-size: 24px;
-                font-weight: bold;
-            `;
-
-            const courseInstructor = document.createElement('p');
-            courseInstructor.textContent = `Instructor: ${course.instructor}`;
-            courseInstructor.style.cssText = `
-                color: rgba(255, 255, 255, 0.9);
-                margin: 0;
-                font-size: 16px;
-            `;
-
-            headerOverlay.appendChild(courseTitle);
-            headerOverlay.appendChild(courseInstructor);
-            courseHeader.appendChild(headerOverlay);
-
-            // Course details content
-            const courseDetails = document.createElement('div');
-            courseDetails.style.cssText = `
-                padding: 20px;
-            `;
-
-            const courseDescription = document.createElement('div');
-            courseDescription.style.cssText = `
-                margin-bottom: 20px;
-                line-height: 1.6;
-                color: #333;
-            `;
-            courseDescription.innerHTML = `<h3 style="margin-top: 0;">Course Description</h3><p>${course.description}</p>`;
-
-            // Cost and action button
-            const actionArea = document.createElement('div');
-            actionArea.style.cssText = `
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 1px solid #eee;
-            `;
-
-            const costDisplay = document.createElement('div');
-            costDisplay.style.cssText = `
-                font-size: 24px;
-                font-weight: bold;
-                color: #333;
-            `;
-            costDisplay.innerHTML = course.cost === 0 ? 
-                '<span style="color: #4caf50;">FREE</span>' : 
-                `<span style="color: #f39c12;">${course.cost} Coins</span>`;
-
-            const accessButton = document.createElement('button');
-            accessButton.style.cssText = `
-                padding: 12px 24px;
-                background-color: ${course.cost === 0 ? '#4caf50' : '#f39c12'};
-                color: white;
-                border: none;
-                border-radius: 25px;
-                font-weight: bold;
-                font-size: 16px;
-                cursor: pointer;
-                transition: all 0.2s;
-            `;
-            accessButton.textContent = course.cost === 0 ? 'Access Now' : 'Purchase Course';
-            accessButton.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
-            accessButton.onmouseout = function() { this.style.transform = 'scale(1)'; };
-
-            // Handle access button click
-            accessButton.addEventListener('click', function() {
-                if (course.cost > 0) {
-                    // For paid courses, check if user has enough coins
-                    const user = firebase.auth().currentUser;
-                    if (user) {
-                        const userRef = db.collection("users").doc(user.uid);
-                        userRef.get().then((doc) => {
-                            if (doc.exists) {
-                                const userCoins = doc.data().coins || 0;
-                                if (userCoins >= course.cost) {
-                                    if (confirm(`Do you want to spend ${course.cost} coins to access this course?`)) {
-                                        // Deduct coins
-                                        userRef.update({ 
-                                            coins: firebase.firestore.FieldValue.increment(-course.cost) 
-                                        }).then(() => {
-                                            // Update UI
-                                            const coinCount = document.getElementById('coin-count');
-                                            if (coinCount) {
-                                                coinCount.textContent = userCoins - course.cost;
-                                            }
+            try {
+                console.log('Opening course modal for:', course.title);  // Debug logging
+                
+                // Remove any existing modal
+                const existingModal = document.getElementById('course-modal-overlay');
+                if (existingModal) {
+                    document.body.removeChild(existingModal);
+                }
+                
+                // Create modal elements
+                const modalOverlay = document.createElement('div');
+                modalOverlay.id = 'course-modal-overlay';
+                modalOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1001;
+                `;
+    
+                const modalContent = document.createElement('div');
+                modalContent.style.cssText = `
+                    background-color: white;
+                    border-radius: 8px;
+                    width: 90%;
+                    max-width: 700px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                    position: relative;
+                `;
+    
+                // Close button
+                const closeButton = document.createElement('button');
+                closeButton.innerHTML = '&times;';
+                closeButton.style.cssText = `
+                    position: absolute;
+                    top: 10px;
+                    right: 15px;
+                    background: none;
+                    border: none;
+                    font-size: 28px;
+                    cursor: pointer;
+                    color: #666;
+                    z-index: 1002;
+                `;
+                closeButton.onclick = function() {
+                    document.body.removeChild(modalOverlay);
+                };
+    
+                // Course header with image banner
+                const courseHeader = document.createElement('div');
+                courseHeader.style.cssText = `
+                    width: 100%;
+                    height: 200px;
+                    background-image: url(${course.thumbnail});
+                    background-size: cover;
+                    background-position: center;
+                    border-top-left-radius: 8px;
+                    border-top-right-radius: 8px;
+                    position: relative;
+                `;
+    
+                // Overlay on image for better text visibility
+                const headerOverlay = document.createElement('div');
+                headerOverlay.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    padding: 20px;
+                `;
+    
+                const courseTitle = document.createElement('h2');
+                courseTitle.textContent = course.title;
+                courseTitle.style.cssText = `
+                    color: white;
+                    margin: 0 0 10px 0;
+                    font-size: 24px;
+                    font-weight: bold;
+                `;
+    
+                const courseInstructor = document.createElement('p');
+                courseInstructor.textContent = `Instructor: ${course.instructor}`;
+                courseInstructor.style.cssText = `
+                    color: rgba(255, 255, 255, 0.9);
+                    margin: 0;
+                    font-size: 16px;
+                `;
+    
+                headerOverlay.appendChild(courseTitle);
+                headerOverlay.appendChild(courseInstructor);
+                courseHeader.appendChild(headerOverlay);
+    
+                // Course details content
+                const courseDetails = document.createElement('div');
+                courseDetails.id = 'course-details-content';
+                courseDetails.style.cssText = `
+                    padding: 20px;
+                `;
+    
+                const courseDescription = document.createElement('div');
+                courseDescription.style.cssText = `
+                    margin-bottom: 20px;
+                    line-height: 1.6;
+                    color: #333;
+                `;
+                courseDescription.innerHTML = `<h3 style="margin-top: 0;">Course Description</h3><p>${course.description}</p>`;
+    
+                // Cost and action button
+                const actionArea = document.createElement('div');
+                actionArea.style.cssText = `
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #eee;
+                `;
+    
+                const costDisplay = document.createElement('div');
+                costDisplay.style.cssText = `
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #333;
+                `;
+                costDisplay.innerHTML = course.cost === 0 ? 
+                    '<span style="color: #4caf50;">FREE</span>' : 
+                    `<span style="color: #f39c12;">${course.cost} Coins</span>`;
+    
+                const accessButton = document.createElement('button');
+                accessButton.id = 'course-access-button';
+                accessButton.style.cssText = `
+                    padding: 12px 24px;
+                    background-color: ${course.cost === 0 ? '#4caf50' : '#f39c12'};
+                    color: white;
+                    border: none;
+                    border-radius: 25px;
+                    font-weight: bold;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                `;
+                accessButton.textContent = course.cost === 0 ? 'Access Now' : 'Purchase Course';
+                accessButton.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
+                accessButton.onmouseout = function() { this.style.transform = 'scale(1)'; };
+    
+                // Handle access button click
+                accessButton.addEventListener('click', function() {
+                    console.log('Access button clicked for course:', course.title);  // Debug logging
+                    
+                    if (course.cost > 0) {
+                        // For paid courses, check if user has enough coins
+                        const user = firebase.auth().currentUser;
+                        if (user) {
+                            console.log('User authenticated:', user.email);  // Debug logging
+                            const userRef = db.collection("users").doc(user.uid);
+                            
+                            userRef.get().then((doc) => {
+                                if (doc.exists) {
+                                    const userCoins = doc.data().coins || 0;
+                                    console.log('User coins:', userCoins, 'Course cost:', course.cost);  // Debug logging
+                                    
+                                    if (userCoins >= course.cost) {
+                                        if (confirm(`Do you want to spend ${course.cost} coins to access this course?`)) {
+                                            console.log('Purchase confirmed');  // Debug logging
                                             
-                                            // Change modal content to show success
-                                            courseDetails.innerHTML = `
-                                                <div style="text-align: center; padding: 40px 20px;">
-                                                    <i data-lucide="check-circle" style="width: 80px; height: 80px; color: #4caf50;"></i>
-                                                    <h2 style="margin-top: 20px; color: #333;">Purchase Successful!</h2>
-                                                    <p style="margin-bottom: 30px; color: #666;">You now have access to this course.</p>
-                                                    <button id="open-course-btn" style="padding: 12px 24px; background-color: #2563eb; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer;">Open Course</button>
-                                                </div>
-                                            `;
-                                            
-                                            // Recreate Lucide icons
-                                            lucide.createIcons();
-                                            
-                                            // Add event listener to the open course button
-                                            document.getElementById('open-course-btn').addEventListener('click', function() {
-                                                window.open(course.url, '_blank');
-                                                document.body.removeChild(modalOverlay);
+                                            // Deduct coins
+                                            userRef.update({ 
+                                                coins: firebase.firestore.FieldValue.increment(-course.cost) 
+                                            }).then(() => {
+                                                console.log('Coins deducted successfully');  // Debug logging
+                                                
+                                                // Update UI
+                                                const coinCount = document.getElementById('coin-count');
+                                                if (coinCount) {
+                                                    coinCount.textContent = userCoins - course.cost;
+                                                }
+                                                
+                                                // Change modal content to show success
+                                                courseDetails.innerHTML = `
+                                                    <div style="text-align: center; padding: 40px 20px;">
+                                                        <i data-lucide="check-circle" style="width: 80px; height: 80px; color: #4caf50;"></i>
+                                                        <h2 style="margin-top: 20px; color: #333;">Purchase Successful!</h2>
+                                                        <p style="margin-bottom: 30px; color: #666;">You now have access to this course.</p>
+                                                        <button id="open-course-btn" style="padding: 12px 24px; background-color: #2563eb; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer;">Open Course</button>
+                                                    </div>
+                                                `;
+                                                
+                                                // Recreate Lucide icons
+                                                if (typeof lucide !== 'undefined') {
+                                                    lucide.createIcons();
+                                                }
+                                                
+                                                // Add event listener to the open course button
+                                                const openCourseBtn = document.getElementById('open-course-btn');
+                                                if (openCourseBtn) {
+                                                    openCourseBtn.addEventListener('click', function() {
+                                                        window.open(course.url, '_blank');
+                                                        document.body.removeChild(modalOverlay);
+                                                    });
+                                                }
+                                            }).catch(error => {
+                                                console.error('Error updating coins:', error);
+                                                alert('An error occurred while processing your purchase. Please try again.');
                                             });
-                                        });
+                                        }
+                                    } else {
+                                        alert(`You need ${course.cost - userCoins} more coins to access this course. Watch ads to earn more coins!`);
                                     }
                                 } else {
-                                    alert(`You need ${course.cost - userCoins} more coins to access this course. Watch ads to earn more coins!`);
+                                    console.log('No user document found');  // Debug logging
+                                    alert('Unable to retrieve your account information. Please try again later.');
                                 }
-                            }
-                        });
+                            }).catch(error => {
+                                console.error('Error getting user data:', error);  // Debug logging
+                                alert('An error occurred while accessing your account information. Please try again.');
+                            });
+                        } else {
+                            console.log('User not logged in');  // Debug logging
+                            alert("Please log in to access this course!");
+                        }
                     } else {
-                        alert("Please log in to access this course!");
+                        // For free courses, open directly
+                        console.log('Opening free course');  // Debug logging
+                        window.open(course.url, '_blank');
+                        document.body.removeChild(modalOverlay);
                     }
-                } else {
-                    // For free courses, open directly
-                    window.open(course.url, '_blank');
-                    document.body.removeChild(modalOverlay);
+                });
+    
+                actionArea.appendChild(costDisplay);
+                actionArea.appendChild(accessButton);
+    
+                // Assemble all elements
+                courseDetails.appendChild(courseDescription);
+                courseDetails.appendChild(actionArea);
+    
+                modalContent.appendChild(closeButton);
+                modalContent.appendChild(courseHeader);
+                modalContent.appendChild(courseDetails);
+                modalOverlay.appendChild(modalContent);
+    
+                // Close modal when clicking outside
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) {
+                        document.body.removeChild(modalOverlay);
+                    }
+                });
+    
+                // Add modal to the DOM
+                document.body.appendChild(modalOverlay);
+                
+                // Initialize Lucide icons in the modal
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
                 }
-            });
-
-            actionArea.appendChild(costDisplay);
-            actionArea.appendChild(accessButton);
-
-            // Assemble all elements
-            courseDetails.appendChild(courseDescription);
-            courseDetails.appendChild(actionArea);
-
-            modalContent.appendChild(closeButton);
-            modalContent.appendChild(courseHeader);
-            modalContent.appendChild(courseDetails);
-            modalOverlay.appendChild(modalContent);
-
-            // Close modal when clicking outside
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === modalOverlay) {
-                    document.body.removeChild(modalOverlay);
-                }
-            });
-
-            // Add modal to the DOM
-            document.body.appendChild(modalOverlay);
-            
-            // Initialize Lucide icons in the modal
-            lucide.createIcons({
-                attrs: {
-                    class: ["my-custom-class"]
-                }
-            });
+            } catch (error) {
+                console.error('Error showing course modal:', error);
+                alert('An error occurred while trying to view the course details. Please try again.');
+            }
         }
 
         // Initialize search results with popular courses when focused
