@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>Scholarships - Seekho</title>
-=======
-    <title>Seekho - Scholarships</title>
->>>>>>> main
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script type="module" src="auth.js"></script>
@@ -109,115 +105,6 @@
                     </a>
                 </h1>
             </div>
-<<<<<<< HEAD
-
-            <!-- Navigation -->
-            <nav style="display: flex; gap: 32px;">
-                <a href="earn.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px; hover-background: rgba(255, 255, 255, 0.1);" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                    <i data-lucide="trophy" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
-                    Earn
-                </a>
-                <a href="scholarships.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                    <i data-lucide="graduation-cap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
-                    Scholarships
-                </a>
-                <a href="opportunities.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                    <i data-lucide="rocket" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
-                    Opportunities
-                </a>
-            </nav>
-
-            <!-- Right Section (Search, Coins & Profile) -->
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <!-- Search Bar -->
-                <div style="position: relative;">
-                    <input type="text" id="yt-search" placeholder="Search YouTube videos..." 
-                        style="padding: 8px 16px 8px 40px; border-radius: 20px; border: none; background: rgba(255, 255, 255, 0.15); color: white; width: 250px; transition: all 0.3s;"
-                        onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'"
-                        onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'"
-                        onfocus="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'; this.style.width='300px'"
-                        onblur="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'; this.style.width='250px'">
-                    <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: rgba(255, 255, 255, 0.8);"></i>
-                </div>
-
-                <!-- Coin Display -->
-                <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.15); padding: 8px 16px; border-radius: 20px; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'">
-                    <i data-lucide="coins" style="width: 20px; height: 20px; color: #ffd700;"></i>
-                    <span id="coin-count" style="color: white; font-weight: 600;">0</span>
-                </div>
-
-                <!-- User Profile -->
-                <div class="profile-dropdown" style="position: relative;">
-                    <button style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                        <i data-lucide="user-circle-2" style="width: 32px; height: 32px; color: white;"></i>
-                    </button>
-                    <div class="dropdown-content" style="display: none; position: absolute; right: 0; top: 100%; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 180px; margin-top: 8px;">
-                        <a href="#" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
-                            <i data-lucide="user" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
-                            Profile
-                        </a>
-                        <a href="#" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
-                            <i data-lucide="settings" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
-                            Settings
-                        </a>
-                        <a href="#" id="logout-btn" style="display: block; padding: 12px 16px; color: #dc2626; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
-                            <i data-lucide="log-out" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
-                            Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Header-specific JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-
-            // Profile dropdown functionality
-            const profileButton = document.querySelector('.profile-dropdown button');
-            const dropdownContent = document.querySelector('.dropdown-content');
-
-            profileButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function() {
-                dropdownContent.style.display = 'none';
-            });
-
-            // YouTube search functionality
-            const searchInput = document.getElementById('yt-search');
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const query = this.value.trim();
-                    if (query) {
-                        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-                        window.open(searchUrl, '_blank');
-                    }
-                }
-            });
-
-            // Logout functionality
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (typeof window.logoutUser === 'function') {
-                        window.logoutUser();
-                    }
-                });
-            }
-        });
-    </script>
-=======
->>>>>>> main
 
             <!-- Navigation -->
             <nav style="display: flex; gap: 32px;">
@@ -402,10 +289,6 @@
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-    </section>
-=======
     </div>
->>>>>>> main
 </body>
 </html>
