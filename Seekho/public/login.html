@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Seekho</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <script type="module" src="auth.js"></script>
+</head>
+<body>
+    <!-- Include the header -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <form action="#" class="sign-in-form">
+                    <h2 class="title">Sign in</h2>
+                    <div id="signInMessage" class="messageDiv" style="display:none;"></div>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Email" id="mail"/>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="pass"/>
+                    </div>
+                    <input type="submit" id="submitSignIn" value="Login" class="btn solid" />
+                    <p class="social-text">Or Sign in and Register with Google</p>
+                    <div class="social-media">
+                        <button type="submit" id="popup-signin" class="social-icon">
+                            <img src="img/HQr5iV01.svg" alt="Google" />
+                            <i class="fab fa-google"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load the header
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error loading header:', error));
+    </script>
+</body>
+</html> 

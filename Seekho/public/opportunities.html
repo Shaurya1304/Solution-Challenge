@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunities - Seekho</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Auth Script -->
+    <script type="module" src="auth.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f9ff;
+        }
+
+        #content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .hero-section {
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .section {
+            max-width: 1100px;
+            margin: 0 auto 32px;
+            padding: 0 16px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(to right, #f97316, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #f97316, #dc2626);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .section-title:hover::after {
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            color: white;
+            text-decoration: none;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Variant colors for different sections */
+        .hackathon-card {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        }
+
+        .internship-card {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+        }
+
+        .contest-card {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            margin-top: 32px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            #content {
+                padding: 0 16px;
+                margin: 16px auto;
+            }
+
+            .hero-section {
+                padding: 32px 16px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card img {
+                height: 160px;
+            }
+
+            .card-content {
+                padding: 16px;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .card-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header style="background: linear-gradient(135deg, #1a237e, #0d47a1); padding: 16px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+            <!-- Logo/Brand -->
+            <div style="display: flex; align-items: center;">
+                <h1 style="margin: 0; font-size: 28px;">
+                    <a href="homepage.html" style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="book-open" style="width: 32px; height: 32px;"></i>
+                        <span style="background: linear-gradient(to right, #fff, #64b5f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Seekho</span>
+                    </a>
+                </h1>
+            </div>
+
+            <!-- Navigation -->
+            <nav style="display: flex; gap: 32px;">
+                <a href="earn.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px; hover-background: rgba(255, 255, 255, 0.1);" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i data-lucide="trophy" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                    Earn
+                </a>
+                <a href="scholarships.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i data-lucide="graduation-cap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                    Scholarships
+                </a>
+                <a href="opportunities.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i data-lucide="rocket" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                    Opportunities
+                </a>
+            </nav>
+
+            <!-- Right Section (Search, Coins & Profile) -->
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <!-- Search Bar -->
+                <div style="position: relative;">
+                    <input type="text" id="yt-search" placeholder="Search YouTube videos..." 
+                        style="padding: 8px 16px 8px 40px; border-radius: 20px; border: none; background: rgba(255, 255, 255, 0.15); color: white; width: 250px; transition: all 0.3s;"
+                        onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'"
+                        onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'"
+                        onfocus="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'; this.style.width='300px'"
+                        onblur="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'; this.style.width='250px'">
+                    <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: rgba(255, 255, 255, 0.8);"></i>
+                </div>
+
+                <!-- Coin Display -->
+                <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.15); padding: 8px 16px; border-radius: 20px; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'">
+                    <i data-lucide="coins" style="width: 20px; height: 20px; color: #ffd700;"></i>
+                    <span id="coin-count" style="color: white; font-weight: 600;">0</span>
+                </div>
+
+                <!-- User Profile -->
+                <div class="profile-dropdown" style="position: relative;">
+                    <button style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                        <i data-lucide="user-circle-2" style="width: 32px; height: 32px; color: white;"></i>
+                    </button>
+                    <div class="dropdown-content" style="display: none; position: absolute; right: 0; top: 100%; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 180px; margin-top: 8px;">
+                        <a href="#" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                            <i data-lucide="user" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
+                            Profile
+                        </a>
+                        <a href="#" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                            <i data-lucide="settings" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
+                            Settings
+                        </a>
+                        <a href="#" id="logout-btn" style="display: block; padding: 12px 16px; color: #dc2626; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                            <i data-lucide="log-out" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content Section -->
+    <section id="content">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h2 class="hero-title">Unlock Your Future</h2>
+            <p class="hero-subtitle">Find the best competitions, hackathons, scholarships, and internships.</p>
+        </div>
+
+        <!-- Hackathons Section -->
+        <div class="section">
+            <h3 class="section-title">🔥 Hackathons</h3>
+            <div class="grid-container">
+                <a href="https://vision.hack2skill.com/event/informatica2025?utm_source=hack2skill&utm_medium=homepage&sectionid=6751859692dd35342702d4d9" class="card hackathon-card">
+                    <img src="https://media.licdn.com/dms/image/v2/D4E12AQFtyFtYAcbEiA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1671268732417?e=2147483647&v=beta&t=xT9C7hBWpLmCHNuAmbxMEwAbJyM6KvORY8m1vOEf8Fw" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">AI Hackathon 2025</h4>
+                        <p class="card-text">Compete with the best minds and win big prizes.</p>
+                    </div>
+                </a>
+                <a href="https://hack2skill.com/hack/codesprint" class="card hackathon-card">
+                    <img src="https://images.lumacdn.com/event-covers/pz/360b93d5-a599-4e5f-b807-abd8d7190415.jpg" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">CodeSprint Global</h4>
+                        <p class="card-text">A global coding competition with cash rewards.</p>
+                    </div>
+                </a>
+                <a href="https://www.cloudskillsboost.google/paths/31" class="card hackathon-card">
+                    <img src="https://innovationcloud.com/pub/blog/1621869372338_ic-startup-innovation.jpg" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Startup Innovators</h4>
+                        <p class="card-text">Build startup ideas and get funding.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Internships Section -->
+        <div class="section">
+            <h3 class="section-title">🎯 Internships</h3>
+            <div class="grid-container">
+                <a href="https://buildyourfuture.withgoogle.com/internships" class="card internship-card">
+                    <img src="https://i0.wp.com/opportunitiesforyouth.org/wp-content/uploads/2024/09/Screenshot-2024-09-26-002030.png?resize=1278%2C640&ssl=1" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Google Internship 2025</h4>
+                        <p class="card-text">Work with industry leaders and enhance your skills.</p>
+                    </div>
+                </a>
+                <a href="https://careers.microsoft.com/v2/global/en/universityinternship" class="card internship-card">
+                    <img src="https://i0.wp.com/www.coursejoiner.com/wp-content/uploads/2025/03/Fhw5K9rUSNS3wgYKF0z6QA.jpg?resize=696%2C390&ssl=1" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Microsoft AI Intern</h4>
+                        <p class="card-text">Gain hands-on AI research experience.</p>
+                    </div>
+                </a>
+                <a href="https://in.indeed.com/q-startup-internship-web-developer-jobs.html?vjk=4d2f6bec978e7ab5" class="card internship-card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTntm4tVq_1kHxiMNYB7dPTcOhnHfioeAGwSg&s" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Startup Developer Internship</h4>
+                        <p class="card-text">Intern with fast-growing startups and learn innovation.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Contests Section -->
+        <div class="section">
+            <h3 class="section-title">🏆 Contests</h3>
+            <div class="grid-container">
+                <a href="https://www.growthmentor.com/blog/startup-pitch-competitions/" class="card contest-card">
+                    <img src="https://www.moneycrashers.com/wp-content/uploads/2023/08/startup-pitch-competition-guide.jpg" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Startup Pitch Contest</h4>
+                        <p class="card-text">Showcase your business idea and win funding.</p>
+                    </div>
+                </a>
+                <a href="https://www.scribendi.com/academy/articles/30_day_writing_challenge.en.html" class="card contest-card">
+                    <img src="https://i.ytimg.com/vi/wM5olKoJ5VY/sddefault.jpg" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">Creative Writing Challenge</h4>
+                        <p class="card-text">Show your creativity and win exciting prizes.</p>
+                    </div>
+                </a>
+                <a href="https://uxdesigncontest.com/" class="card contest-card">
+                    <img src="https://uxdesigncontest.com/img/peeps-twitter-card-img.png" alt="">
+                    <div class="card-content">
+                        <h4 class="card-title">UI/UX Design Contest</h4>
+                        <p class="card-text">Design the best UI and win recognition.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Seekho-Opportunities. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Header-specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Profile dropdown functionality
+            const profileButton = document.querySelector('.profile-dropdown button');
+            const dropdownContent = document.querySelector('.dropdown-content');
+
+            profileButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                dropdownContent.style.display = 'none';
+            });
+
+            // YouTube search functionality
+            const searchInput = document.getElementById('yt-search');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                        window.open(searchUrl, '_blank');
+                    }
+                }
+            });
+
+            // Logout functionality
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (typeof window.logoutUser === 'function') {
+                        window.logoutUser();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Your existing opportunities page content here -->
+    </div>
+</body>
+</html>
