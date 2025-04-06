@@ -84,5 +84,35 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Handle Sign-In Form Submission
+        const signInForm = document.querySelector('.sign-in-form');
+        signInForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const email = document.getElementById('mail').value;
+          const password = document.getElementById('pass').value;
+
+          // Simulate authentication (replace with actual logic)
+          if (email && password) {
+            window.location.href = 'homepage.html'; // Redirect to homepage
+          }
+        });
+
+        // Handle Sign-Up Form Submission
+        const signUpForm = document.querySelector('.sign-up-form');
+        signUpForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const username = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          // Simulate registration (replace with actual logic)
+          if (username && email && password) {
+            window.location.href = 'homepage.html'; // Redirect to homepage
+          }
+        });
+      });
+    </script>
   </body>
 </html>
