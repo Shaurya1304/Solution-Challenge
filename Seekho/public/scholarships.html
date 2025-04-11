@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholarships - Seekho</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="module" src="auth.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f0f9ff;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #content {
+            padding: 40px 20px;
+            margin: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1d4ed8;
+            margin-bottom: 20px;
+            text-align: center;
+            text-decoration: underline;
+        }
+
+        .scholarship-card, .exam-card {
+            background-color: #ecfeff;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .scholarship-card a, .exam-card a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .scholarship-card:hover, .exam-card:hover {
+            transform: scale(1.05);
+        }
+
+        .section-container {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scroll-container {
+            max-height: 450px;
+            overflow-y: auto;
+            padding-right: 10px;
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            justify-items: center;
+            width: 100%;
+        }
+
+        .exam-card h3 {
+            color: #1e40af;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 0;
+        }
+
+        .gov-scholarships, .private-scholarships, .exam-scholarships {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header style="background: linear-gradient(135deg, #1a237e, #0d47a1); padding: 16px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+            <!-- Logo/Brand -->
+            <div style="display: flex; align-items: center;">
+                <h1 style="margin: 0; font-size: 28px;">
+                    <a href="homepage.html" style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="book-open" style="width: 32px; height: 32px;"></i>
+                        <span style="background: linear-gradient(to right, #fff, #64b5f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Seekho</span>
+                    </a>
+                </h1>
+            </div>
+
+            <!-- Navigation -->
+            <nav style="display: flex; gap: 32px;">
+                <a href="earn.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px; hover-background: rgba(255, 255, 255, 0.1);" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i data-lucide="trophy" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                    Earn
+                </a>
+                <a href="scholarships.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i data-lucide="graduation-cap" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                    Scholarships
+                </a>
+                <a href="opportunities.html" style="color: white; text-decoration: none; font-weight: 500; transition: all 0.3s; padding: 8px 16px; border-radius: 20px;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <i data-lucide="rocket" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                    Opportunities
+                </a>
+            </nav>
+
+            <!-- Right Section (Search, Coins & Profile) -->
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <!-- Search Bar -->
+                <div style="position: relative;">
+                    <input type="text" id="yt-search" placeholder="Search YouTube videos..." 
+                        style="padding: 8px 16px 8px 40px; border-radius: 20px; border: none; background: rgba(255, 255, 255, 0.15); color: white; width: 250px; transition: all 0.3s;"
+                        onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'"
+                        onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'"
+                        onfocus="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'; this.style.width='300px'"
+                        onblur="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'; this.style.width='250px'">
+                    <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: rgba(255, 255, 255, 0.8);"></i>
+                </div>
+
+                <!-- Coin Display -->
+                <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.15); padding: 8px 16px; border-radius: 20px; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.15)'">
+                    <i data-lucide="coins" style="width: 20px; height: 20px; color: #ffd700;"></i>
+                    <span id="coin-count" style="color: white; font-weight: 600;">0</span>
+                </div>
+
+                <!-- User Profile -->
+                <div class="profile-dropdown" style="position: relative;">
+                    <button style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                        <i data-lucide="user-circle-2" style="width: 32px; height: 32px; color: white;"></i>
+                    </button>
+                    <div class="dropdown-content" style="display: none; position: absolute; right: 0; top: 100%; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 180px; margin-top: 8px;">
+                        <a href="#" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                            <i data-lucide="user" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
+                            Profile
+                        </a>
+                        <a href="#" style="display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                            <i data-lucide="settings" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
+                            Settings
+                        </a>
+                        <a href="#" id="logout-btn" style="display: block; padding: 12px 16px; color: #dc2626; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='transparent'">
+                            <i data-lucide="log-out" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Header-specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Profile dropdown functionality
+            const profileButton = document.querySelector('.profile-dropdown button');
+            const dropdownContent = document.querySelector('.dropdown-content');
+
+            profileButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                dropdownContent.style.display = 'none';
+            });
+
+            // YouTube search functionality
+            const searchInput = document.getElementById('yt-search');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                        window.open(searchUrl, '_blank');
+                    }
+                }
+            });
+
+            // Logout functionality
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (typeof window.logoutUser === 'function') {
+                        window.logoutUser();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Government Scholarships Section -->
+        <div class="section-container gov-scholarships">
+            <div class="section-title">Government Scholarships</div>
+            <div class="scroll-container grid-container">
+                <div class="scholarship-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">Ayush Scholarship</h3>
+                    <p style="margin: 10px 0;">Scholarship for students in the Ayush program pursuing traditional medicine studies.</p>
+                    <a href="https://ayushedu.bisag-n.gov.in/AYUSH_EDU/landingpage" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">Government of India Scholarship</h3>
+                    <p style="margin: 10px 0;">Financial assistance for underprivileged students across various fields of study.</p>
+                    <a href="https://scholarships.gov.in" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">National Merit Scholarship</h3>
+                    <p style="margin: 10px 0;">Awarded to students excelling in academics and extracurricular activities.</p>
+                    <a href="https://www.nationalmerit.org/s/1758/start.aspx?gid=2&pgid=61" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Private Scholarships Section -->
+        <div class="section-container private-scholarships">
+            <div class="section-title">Private Scholarships</div>
+            <div class="scroll-container grid-container">
+                <div class="scholarship-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">Tata Scholarships</h3>
+                    <p style="margin: 10px 0;">Scholarships for students pursuing higher education in India and abroad, supported by the Tata Trust.</p>
+                    <a href="https://www.tatatrusts.org/our-work/individual-grants-programme/education-grants" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">HDFC Educational Crisis Scholarship Support</h3>
+                    <p style="margin: 10px 0;">Provides scholarships to students from underprivileged families for continued education.</p>
+                    <a href="https://www.hdfcbankecss.com" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="scholarship-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">Google Scholarships</h3>
+                    <p style="margin: 10px 0;">Scholarships for students pursuing degrees in computer science, technology, engineering, and related fields.</p>
+                    <a href="https://buildyourfuture.withgoogle.com/scholarships" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scholarship Exams Section -->
+        <div class="section-container exam-scholarships">
+            <div class="section-title">Scholarship Exams</div>
+            <div class="scroll-container grid-container">
+                <div class="exam-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">SEATS</h3>
+                    <p style="margin: 10px 0;">Scheme for Early Attraction of Talent (SEATS) exam identifies and nurtures young talent.</p>
+                    <a href="https://www.indiascienceandtechnology.gov.in/nurturing-minds/scholarships/school/scheme-early-attraction-talent-seats" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">NTSE</h3>
+                    <p style="margin: 10px 0;">National Talent Search Exam (NTSE) helps identify and nurture talented students in India.</p>
+                    <a href="https://ncert.nic.in/national-talent-examination.php" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">KVPY</h3>
+                    <p style="margin: 10px 0;">Kishore Vaigyanik Protsahan Yojana (KVPY) provides scholarships for students pursuing science education.</p>
+                    <a href="https://www.indiascienceandtechnology.gov.in/nurturing-minds/scholarships/school/kishore-vaigyanik-protsahan-yojana-kvpy" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">VSTS</h3>
+                    <p style="margin: 10px 0;">Velammal Science Talent Search Exams (VSTS) aims to promote science among students.</p>
+                    <a href="https://vvm.org.in/district_ranker_list/536" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+                <div class="exam-card">
+                    <h3 style="color: #1e40af; font-size: 1.5rem; font-weight: bold; margin-top: 0;">SHE</h3>
+                    <p style="margin: 10px 0;">Scholarship for Higher Education (SHE) offers financial assistance to students pursuing higher studies.</p>
+                    <a href="https://www.online-inspire.gov.in/Content/SHEFAQs.pdf" target="_blank" style="color: #10b981; text-decoration: none; font-weight: bold;">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
